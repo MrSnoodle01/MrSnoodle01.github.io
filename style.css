@@ -1,0 +1,43 @@
+h1{
+    color: red;
+    text-align: center;
+}
+
+.helo{
+    height: 100%;
+    width: 100%;
+}
+
+
+.bunny{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.vegas{
+    position: absolute;
+    left: 20%;
+    height: 70%;
+
+}
+
+#left-container{
+    background-color: #777777;
+    width: 10%;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    height: 100%;
+    padding: 10px;
+}
+
+#right-container{
+    background-color: #777777;
+    width: 10%;
+    right: 0px;
+    top: 0px;
+    position: absolute;
+    height: 100%;
+    padding: 10px;
+}
