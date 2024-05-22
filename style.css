@@ -1,44 +1,41 @@
 h1{
-    color: red;
+    color: #8fdee6;
     text-align: center;
 }
 
-.helo{
-    height: 100%;
-    width: 100%;
-}
-
-
-.bunny{
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
-}
-
-.vegas{
+.center{
     position: absolute;
-    left: 25%;
-    height: 70%;
-    width: auto;
-    max-width: 50vw;
+    left: 55%;
+    top: 20%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
-#left-container{
-    background-color: #777777;
-    width: 10%;
-    left: 0px;
-    top: 0px;
-    position: absolute;
-    height: 100%;
-    padding: .7%;
+.button{
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    color:black;
+    border: 2px solid #8dca6d;
+    cursor: pointer;
+    text-align: center;
+    font-size: 25px;
+    width: 75%;
+    border-radius: 7px;
+    transition-duration: 0.4s;
+    display: inline-block;
 }
 
-#right-container{
-    background-color: #777777;
-    width: 10%;
-    right: 0px;
-    top: 0px;
-    position: absolute;
-    height: 100%;
-    padding: .7%;
+.button1:hover{
+    background-color: #8dca6d;
+    color:white;
+}
+
+.button2:hover{
+    background-color: #8dca6d;
+    color:white;
+}
+
+.button3:hover{
+    background-color: #8dca6d;
+    color:white;
 }
