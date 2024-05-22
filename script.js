@@ -1,11 +1,11 @@
 document.getElementById('sorting').addEventListener('click', () =>{
-    console.log("sorting");
+    location.href = "sortingSite";
 })
 
 document.getElementById('searching').addEventListener('click', () =>{
-    console.log("searching");
+    location.href = "searchingSite";
 })
 
 document.getElementById('shortest-path').addEventListener('click', () =>{
-    console.log("shortest path");
+    location.href = "shortestPathSite";
 })
