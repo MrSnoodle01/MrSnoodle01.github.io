@@ -2,11 +2,3 @@ h1{
     color: #8fdee6;
     text-align: center;
 }
-
-.center{
-    position: absolute;
-    left: 55%;
-    top: 20%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-}

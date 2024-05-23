@@ -7,6 +7,22 @@
         <link rel="stylesheet" href="style.css" />
     </head>
     <body style="background-color: #011627">
-        <h1>Welcome, Idk what im doing for the sorting site yet!</h1>
+        <h1>Welcome, I know it aint finished aight, it'll work eventually</h1>
+        <button type="button" id="home-button">Home</button>
+        <div id="left-container" class="container">
+            <div class="input-row">
+                <label for="options" style="color: #8fdee6">Choose a Sorting Algorithm:</label>
+                <select name="options" id="options">
+                    <option value="selection">Selection Sort</option>
+                    <option value="bubble">Bubble Sort</option>
+                </select>
+            </div>
+            <div class="input-row">
+                <label for="num-items" style="color: #8fdee6">Choose how many items you would like to sort:</label>
+                <input type="number" id="num-items" name="num-items" min="2"><br><br> 
+            </div>
+            <button type="button" class="button" id="submit">Sort Items!</button> 
+        </div>
+        <script src="script.js"></script>
     </body>
 </html>

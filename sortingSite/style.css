@@ -3,10 +3,48 @@ h1{
     text-align: center;
 }
 
-.center{
+input[type=text], select{
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.button{
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    color:black;
+    border: 2px solid #8dca6d;
+    cursor: pointer;
+    text-align: center;
+    font-size: 25px;
+    width: 50%;
+    border-radius: 7px;
+    transition-duration: 0.4s;
+}
+
+.button:hover, #home-button:hover{
+    background-color: #8dca6d;
+    color:white;
+}
+
+#home-button{
     position: absolute;
-    left: 55%;
-    top: 20%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+    left: 0px;
+    top: 0px;
+    height: 7%;
+    width: 7%;
+    background-color: #ffffff;
+    color:black;
+    border: 2px solid #8dca6d;
+    cursor: pointer;
+    border-radius: 7px;
+    transition-duration: 0.4s;
+    font-size: 20px;
+}
+
+#left-container{
+    height: 100%;
+    width: 20%;
+    left: 0px;
+    top: 10%;
+    position: absolute;
 }
