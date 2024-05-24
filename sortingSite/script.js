@@ -71,7 +71,7 @@ function generateArray(numItems){
     }
 }
 
-// swap two blocks
+// swaps two block that are right next to eachother
 function swap(el1, el2){
     return new Promise((resolve) => {
         // for exchanging styles of two blocks
@@ -89,53 +89,61 @@ function swap(el1, el2){
     });
 }
 
-async function selectionSort(delay = 500){
-    // let blocks = document.querySelectorAll(".block");
+async function selectionSort(delay = 200){
+    let blocks = document.querySelectorAll(".block");
 
-    // // selection sort algorithm
-    // for(let i = 0; i < blocks.length - 1; i++){
-    //     let minVal = i;
-    //     // change min value to red color
-    //     blocks[minVal].style.backgroundColor = "#FF4949";
-    //     // find min value in unsorted array
-    //     for(let j = i + 1; j < blocks.length; j++){
-    //         // change currently selected block to yellow
-    //         blocks[j].style.backgroundColor = "#e8f013";
+    // selection sort algorithm
+    for(let i = 0; i < blocks.length - 1; i++){
+        let minVal = i;
+        // change min value to red color
+        blocks[minVal].style.backgroundColor = "#FF4949";
+        // find min value in unsorted array
+        for(let j = i + 1; j < blocks.length; j++){
+            // change currently selected block to yellow
+            blocks[j].style.backgroundColor = "#e8f013";
 
-    //         // delay .1 seconds
-    //         await new Promise((resolve) =>
-    //         setTimeout(() => {
-    //             resolve();
-    //         }, delay)
-    //         );
+            // delay .1 seconds
+            await new Promise((resolve) =>
+            setTimeout(() => {
+                resolve();
+            }, delay)
+            );
 
-    //         let value1 = Number(blocks[j].childNodes[0].innerHTML);
-    //         let value2 = Number(blocks[minVal].childNodes[0].innerHTML);
-    //         console.log("value1: ", value1);
-    //         console.log("value2: ", value2);
-    //         // if lower value, then change color and set minVal variable
-    //         if(value1 < value2){
-    //             console.log("got here");
-    //             blocks[minVal].style.backgroundColor = "#6b5b95";
-    //             minVal = j;
-    //             blocks[minVal].style.backgroundColor = "#FF4949";
-    //         }else{
-    //             blocks[j].style.backgroundColor = "#6b5b95";
-    //         }
-    //     }
+            let value1 = Number(blocks[j].childNodes[0].innerHTML);
+            let value2 = Number(blocks[minVal].childNodes[0].innerHTML);
+            // if lower value, then change color and set minVal variable
+            if(value1 < value2){
+                blocks[minVal].style.backgroundColor = "#6b5b95";
+                minVal = j;
+                blocks[minVal].style.backgroundColor = "#FF4949";
+            }else{
+                blocks[j].style.backgroundColor = "#6b5b95";
+            }
+        }
 
-    //     console.log("i: ", i, "min: ", minVal);
-    //     console.log("swapped: ", Number(blocks[i].childNodes[0].innerHTML), " ", Number(blocks[minVal].childNodes[0].innerHTML));
-    //     if(i != minVal){
-    //         await swap(blocks[i], blocks[minVal]);
-    //         blocks[minVal].style.backgroundColor = "#13CE66";
-    //         blocks = document.querySelectorAll(".block");
-    //     }
-    //     // blocks = document.querySelectorAll(".block");
-        
-    //     // blocks = document.querySelectorAll(".block");
-    // }
-    // blocks[blocks.length - 1].style.backgroundColor = "#13CE66";
+        // swap smallest block to i
+        if(i != minVal){
+            // wait .2 seconds
+            await new Promise((resolve) =>
+                setTimeout(() => {
+                    resolve();
+                }, 200)
+            );
+
+            let temp1 = blocks[minVal].childNodes[0].innerHTML;
+            let temp2 = blocks[minVal].style.height;
+
+            blocks[minVal].childNodes[0].innerHTML = blocks[i].childNodes[0].innerHTML;
+            blocks[minVal].style.height = blocks[i].style.height;
+
+            blocks[i].childNodes[0].innerHTML = temp1;
+            blocks[i].style.height = temp2;
+
+            blocks[minVal].style.backgroundColor = "#6b5b95";
+        }
+        blocks[i].style.backgroundColor = "#13CE66";
+    }
+    blocks[blocks.length - 1].style.backgroundColor = "#13CE66";
 }
 
 async function bubbleSort(delay = 100){
