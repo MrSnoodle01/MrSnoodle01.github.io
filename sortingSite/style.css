@@ -1,3 +1,7 @@
+:root {
+    --width: 100%;
+}
+
 h1{
     color: #8fdee6;
     text-align: center;
@@ -47,4 +51,32 @@ input[type=text], select{
     left: 0px;
     top: 10%;
     position: absolute;
+}
+
+/* bar background */
+#array {
+    background-color: black;
+    height: 70%;
+    width: 50%;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+}
+ 
+/* bar */
+.block {
+    width: var(--width);
+    background-color: #6b5b95;
+    position: absolute;
+    bottom: 0px;
+    transition: 0.2s all ease;
+}
+ 
+/* number above bar */
+.block_id {
+    position: absolute;
+    color: black;
+    margin-top: -1px;
+    width: 100%;
+    text-align: center;
 }
