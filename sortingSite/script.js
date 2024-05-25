@@ -1,5 +1,10 @@
 const MAX = 50;
+var delay = 0;
 var container = document.getElementById("array");
+
+document.getElementById("speedSlider").oninput = function(){
+    delay = document.getElementById("speedSlider").value;
+}
 
 // send user back to home page when clicking home button
 document.getElementById('home-button').addEventListener('click', () =>{
@@ -71,25 +76,46 @@ function generateArray(numItems){
     }
 }
 
-// swaps two block that are right next to eachother
-function swap(el1, el2){
+// swaps two blocks
+function swap(blocks, index1, index2){
     return new Promise((resolve) => {
-        // for exchanging styles of two blocks
-        let temp = el1.style.transform;
-        el1.style.transform = el2.style.transform;
-        el2.style.transform = temp;
-
-        window.requestAnimationFrame(function (){
-            // wait .25 seconds
+        window.requestAnimationFrame(function() {
+            // wait .1 seconds
             setTimeout(() => {
-                container.insertBefore(el2, el1);
+                let temp1 = blocks[index1].childNodes[0].innerHTML;
+                let temp2 = blocks[index1].style.height;
+
+
+                blocks[index1].childNodes[0].innerHTML = blocks[index2].childNodes[0].innerHTML;
+                blocks[index1].style.height = blocks[index2].style.height;
+
+                blocks[index2].childNodes[0].innerHTML = temp1;
+                blocks[index2].style.height = temp2;
                 resolve();
-            }, 250);
+            }, delay/2);
         });
     });
 }
 
-async function selectionSort(delay = 200){
+// swaps two block that are right next to eachother
+// function swap(el1, el2){
+    // return new Promise((resolve) => {
+    //     // for exchanging styles of two blocks
+    //     let temp = el1.style.transform;
+    //     el1.style.transform = el2.style.transform;
+    //     el2.style.transform = temp;
+
+    //     window.requestAnimationFrame(function (){
+    //         // wait .25 seconds
+    //         setTimeout(() => {
+    //             container.insertBefore(el2, el1);
+    //             resolve();
+    //         }, 250);
+    //     });
+    // });
+// }
+
+async function selectionSort(){
     let blocks = document.querySelectorAll(".block");
 
     // selection sort algorithm
@@ -127,7 +153,7 @@ async function selectionSort(delay = 200){
             await new Promise((resolve) =>
                 setTimeout(() => {
                     resolve();
-                }, 200)
+                }, delay)
             );
 
             let temp1 = blocks[minVal].childNodes[0].innerHTML;
@@ -146,7 +172,7 @@ async function selectionSort(delay = 200){
     blocks[blocks.length - 1].style.backgroundColor = "#13CE66";
 }
 
-async function bubbleSort(delay = 100){
+async function bubbleSort(){
     let blocks = document.querySelectorAll(".block");
  
     // BubbleSort Algorithm
@@ -170,7 +196,8 @@ async function bubbleSort(delay = 100){
  
             // To compare value of two blocks
             if (value1 > value2) {
-                await swap(blocks[j], blocks[j + 1]);
+                // await swap(blocks[j], blocks[j + 1]);
+                await swap(blocks, j, j+1);
                 blocks = document.querySelectorAll(".block");
             }
  

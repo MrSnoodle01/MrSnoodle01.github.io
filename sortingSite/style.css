@@ -57,10 +57,10 @@ input[type=text], select{
 #array {
     background-color: black;
     height: 70%;
-    width: 50%;
+    width: 60%;
     position: absolute;
     top: 25%;
-    left: 25%;
+    left: 20%;
 }
  
 /* bar */
@@ -74,6 +74,7 @@ input[type=text], select{
  
 /* number above bar */
 .block_id {
+    font-size: 80%;
     position: absolute;
     color: black;
     margin-top: -1px;
