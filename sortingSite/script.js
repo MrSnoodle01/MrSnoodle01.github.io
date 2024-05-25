@@ -2,8 +2,12 @@ const MAX = 50;
 var delay = 0;
 var container = document.getElementById("array");
 
+// gets the value of the speed slider
 document.getElementById("speedSlider").oninput = function(){
     delay = document.getElementById("speedSlider").value;
+    // fast is to right, slow is to left 
+    delay = (delay - 250) * (-1);
+    console.log(delay);
 }
 
 // send user back to home page when clicking home button
@@ -20,6 +24,11 @@ document.getElementById('submit').addEventListener('click', () =>{
         alert("please enter a number less than 100");
         return;
     }
+
+    // gets delay value in case that user didnt touch the slider
+    delay = document.getElementById("speedSlider").value;
+    // fast is to right, slow is to left
+    delay = (delay - 250) * (-1);
 
     // clear old bars
     document.getElementById("array").innerHTML = "";
@@ -40,6 +49,10 @@ document.getElementById('submit').addEventListener('click', () =>{
         case 'Bubble Sort':
             console.log("bubble sort");
             bubbleSort();
+            break;
+        case 'Insertion Sort':
+            console.log("insertion sort");
+            insertionSort();
             break;
         default:
             break;
@@ -115,6 +128,7 @@ function swap(blocks, index1, index2){
     // });
 // }
 
+// selection sort function
 async function selectionSort(){
     let blocks = document.querySelectorAll(".block");
 
@@ -128,7 +142,7 @@ async function selectionSort(){
             // change currently selected block to yellow
             blocks[j].style.backgroundColor = "#e8f013";
 
-            // delay .1 seconds
+            // wait for delay
             await new Promise((resolve) =>
             setTimeout(() => {
                 resolve();
@@ -172,6 +186,7 @@ async function selectionSort(){
     blocks[blocks.length - 1].style.backgroundColor = "#13CE66";
 }
 
+// bubble sort function
 async function bubbleSort(){
     let blocks = document.querySelectorAll(".block");
  
@@ -184,7 +199,7 @@ async function bubbleSort(){
             blocks[j].style.backgroundColor = "#FF4949";
             blocks[j + 1].style.backgroundColor = "#FF4949";
  
-            // To wait for .1 sec
+            // To wait for delay
             await new Promise((resolve) =>
             setTimeout(() => {
                 resolve();
@@ -209,5 +224,34 @@ async function bubbleSort(){
         //changing the color of greatest element 
         //found in the above traversal
         blocks[blocks.length - i - 1].style.backgroundColor ="#13CE66";
+    }
+}
+
+// insertion sort function
+async function insertionSort(){
+    let blocks = document.querySelectorAll(".block");
+
+    // iterate through each element in array
+    for(let i = 1; i < blocks.length; i++){
+        let key = Number(blocks[i].childNodes[0].innerHTML);
+        let j = i - 1;
+
+        // move elements of blocks[0..i-1] greater than the key one to left
+        while(j >= 0 && Number(blocks[j].childNodes[0].innerHTML) > key){
+            // item currently being sorted turns red
+            blocks[j+1].style.backgroundColor = "#FF4949";
+            // To wait for delay
+            await new Promise((resolve) =>
+                setTimeout(() => {
+                    resolve();
+                }, delay)
+                );
+            await swap(blocks, j+1, j);
+            // turns partially sorted array green
+            blocks[j].style.backgroundColor = "#13CE66"
+            blocks[j+1].style.backgroundColor = "#13CE66"
+            j--;
+        }
+        blocks[j + 1] = key;
     }
 }
