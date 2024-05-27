@@ -26,6 +26,9 @@ document.getElementById('submit').addEventListener('click', () =>{
         return;
     }
 
+    // disables button so that graphs cant overlap
+    document.getElementById('submit').disabled = true;
+
     // gets delay value in case that user didnt touch the slider
     delay = document.getElementById("speedSlider").value;
     // fast is to right, slow is to left
@@ -45,27 +48,34 @@ document.getElementById('submit').addEventListener('click', () =>{
 
     // get which algorithm is chosen by user
     let el = document.getElementById('options');
+    algoPick(el);
+})
+
+// picks algorithm from user
+// important to use await so button stays disabled
+async function algoPick(el){
     switch(el.options[el.selectedIndex].innerHTML){
         case 'Selection Sort':
             console.log("selection sort");
-            selectionSort();
+            await selectionSort();
             break;
         case 'Bubble Sort':
             console.log("bubble sort");
-            bubbleSort();
+            await bubbleSort();
             break;
         case 'Insertion Sort':
             console.log("insertion sort");
-            insertionSort();
+            await insertionSort();
             break;
         case 'Merge Sort':
             console.log("merge sort");
-            mergeSort(blocks, 0, blocks.length - 1);
+            await mergeSort(blocks, 0, blocks.length - 1);
             break;
         default:
             break;
     }
-})
+    document.getElementById('submit').disabled = false;
+}
 
 // generate array of blocks
 function generateArray(numItems){
@@ -332,6 +342,11 @@ async function merge(myArr, l, m, r){
 
     // change colors to random if not done, or green if done
     if(k == document.getElementById("num-items").value){
+        await new Promise((resolve) =>
+            setTimeout(() => {
+                resolve();
+            }, delay)
+        );
         for(let i = l; i < k; i++){
             blocks[i].innerHTML = `<label class='block_id'>${myArr[i]}</label>`;
             blocks[i].style.height = `${myArr[i] * 2}%`;
@@ -339,6 +354,11 @@ async function merge(myArr, l, m, r){
         } 
     }else{
         let color = getRandomColor();
+        await new Promise((resolve) =>
+            setTimeout(() => {
+                resolve();
+            }, delay)
+        );
         for(let i = l; i < k; i++){
             blocks[i].innerHTML = `<label class='block_id'>${myArr[i]}</label>`;
             blocks[i].style.height = `${myArr[i] * 2}%`;

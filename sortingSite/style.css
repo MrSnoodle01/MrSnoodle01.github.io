@@ -25,6 +25,12 @@ input[type=text], select{
     transition-duration: 0.4s;
 }
 
+.button[disabled]:hover{
+    background-color: #ffffff;
+    color:black;
+    cursor: not-allowed;
+}
+
 .button:hover, #home-button:hover{
     background-color: #8dca6d;
     color:white;
