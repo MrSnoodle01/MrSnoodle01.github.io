@@ -1,5 +1,7 @@
 const MAX = 50;
 var delay = 0;
+var myArr = [];
+var blocks;
 var container = document.getElementById("array");
 
 // gets the value of the speed slider
@@ -7,7 +9,6 @@ document.getElementById("speedSlider").oninput = function(){
     delay = document.getElementById("speedSlider").value;
     // fast is to right, slow is to left 
     delay = (delay - 250) * (-1);
-    console.log(delay);
 }
 
 // send user back to home page when clicking home button
@@ -19,9 +20,9 @@ document.getElementById('home-button').addEventListener('click', () =>{
 document.getElementById('submit').addEventListener('click', () =>{
     let numItems = document.getElementById("num-items").value;
 
-    // make sure user's number is at most 100
-    if(numItems > 100){
-        alert("please enter a number less than 100");
+    // make sure user's number is at more than 0 and less than 101
+    if(numItems > 100 || numItems < 1){
+        alert("please enter a number greater than 0 and less than 101");
         return;
     }
 
@@ -40,6 +41,9 @@ document.getElementById('submit').addEventListener('click', () =>{
     // generate array and cooresponding divs
     generateArray(numItems);
 
+    blocks = document.querySelectorAll(".block");
+
+    // get which algorithm is chosen by user
     let el = document.getElementById('options');
     switch(el.options[el.selectedIndex].innerHTML){
         case 'Selection Sort':
@@ -54,6 +58,10 @@ document.getElementById('submit').addEventListener('click', () =>{
             console.log("insertion sort");
             insertionSort();
             break;
+        case 'Merge Sort':
+            console.log("merge sort");
+            mergeSort(blocks, 0, blocks.length - 1);
+            break;
         default:
             break;
     }
@@ -61,11 +69,12 @@ document.getElementById('submit').addEventListener('click', () =>{
 
 // generate array of blocks
 function generateArray(numItems){
-    // let tempArr = [20,17,5,30,18];
+    // let tempArray = [4,10,11,20,50];
     for(let i = 0; i < numItems; i++){
         // get value between 1 and MAX
         let value = Math.ceil(Math.random() * MAX);
-        // let value = tempArr[i];
+        // let value = tempArray[i];
+        myArr[i] = value;
 
         // create element div
         let array_ele = document.createElement("div");
@@ -110,28 +119,17 @@ function swap(blocks, index1, index2){
     });
 }
 
-// swaps two block that are right next to eachother
-// function swap(el1, el2){
-    // return new Promise((resolve) => {
-    //     // for exchanging styles of two blocks
-    //     let temp = el1.style.transform;
-    //     el1.style.transform = el2.style.transform;
-    //     el2.style.transform = temp;
-
-    //     window.requestAnimationFrame(function (){
-    //         // wait .25 seconds
-    //         setTimeout(() => {
-    //             container.insertBefore(el2, el1);
-    //             resolve();
-    //         }, 250);
-    //     });
-    // });
-// }
+function getRandomColor(){
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for(let i = 0; i < 6; i++){
+        color += letters[Math.floor(Math.random()*16)];
+    }
+    return color;
+}
 
 // selection sort function
 async function selectionSort(){
-    let blocks = document.querySelectorAll(".block");
-
     // selection sort algorithm
     for(let i = 0; i < blocks.length - 1; i++){
         let minVal = i;
@@ -170,14 +168,7 @@ async function selectionSort(){
                 }, delay)
             );
 
-            let temp1 = blocks[minVal].childNodes[0].innerHTML;
-            let temp2 = blocks[minVal].style.height;
-
-            blocks[minVal].childNodes[0].innerHTML = blocks[i].childNodes[0].innerHTML;
-            blocks[minVal].style.height = blocks[i].style.height;
-
-            blocks[i].childNodes[0].innerHTML = temp1;
-            blocks[i].style.height = temp2;
+            await swap(blocks, minVal, i);
 
             blocks[minVal].style.backgroundColor = "#6b5b95";
         }
@@ -188,12 +179,9 @@ async function selectionSort(){
 
 // bubble sort function
 async function bubbleSort(){
-    let blocks = document.querySelectorAll(".block");
- 
     // BubbleSort Algorithm
     for (let i = 0; i < blocks.length; i++) {
         for (let j = 0; j < blocks.length - i - 1; j++) {
- 
             // To change background-color of the
             // blocks to be compared
             blocks[j].style.backgroundColor = "#FF4949";
@@ -211,9 +199,7 @@ async function bubbleSort(){
  
             // To compare value of two blocks
             if (value1 > value2) {
-                // await swap(blocks[j], blocks[j + 1]);
                 await swap(blocks, j, j+1);
-                blocks = document.querySelectorAll(".block");
             }
  
             // Changing the color to the previous one
@@ -229,8 +215,6 @@ async function bubbleSort(){
 
 // insertion sort function
 async function insertionSort(){
-    let blocks = document.querySelectorAll(".block");
-
     // iterate through each element in array
     for(let i = 1; i < blocks.length; i++){
         let key = Number(blocks[i].childNodes[0].innerHTML);
@@ -245,13 +229,121 @@ async function insertionSort(){
                 setTimeout(() => {
                     resolve();
                 }, delay)
-                );
+            );
             await swap(blocks, j+1, j);
             // turns partially sorted array green
             blocks[j].style.backgroundColor = "#13CE66"
             blocks[j+1].style.backgroundColor = "#13CE66"
             j--;
         }
-        blocks[j + 1] = key;
+        if(j >= 0 && j < blocks.length){
+            if(Number(blocks[j].childNodes[0].innerHTML) < key){
+            await new Promise((resolve) =>
+                setTimeout(() => {
+                    resolve();
+                }, delay)
+            );
+            blocks[j].style.backgroundColor = "#13CE66";
+            }
+        }
     }
+    await new Promise((resolve) =>
+        setTimeout(() => {
+            resolve();
+        }, delay)
+    );
+    blocks[blocks.length-1].style.backgroundColor = "#13CE66";
+}
+
+// merge sort function
+// l = left index of sub-array
+// r = right index of sub-array
+async function mergeSort(blocks, l, r){
+    if(l >= r){
+        return;
+    }
+
+    await new Promise((resolve) =>
+        setTimeout(() => {
+            resolve();
+        }, delay)
+    );
+
+    let m = l + parseInt((r-l)/2);
+    await mergeSort(myArr, l, m);
+    await mergeSort(myArr, m+1, r);
+    await merge(myArr, l, m, r);
+}   
+
+// merges two sub-arrays
+// first sub-array = blocks[l..m]
+// second sub-array = blocks[m+1..r]
+async function merge(myArr, l, m, r){
+    await new Promise((resolve) =>
+        setTimeout(() => {
+            resolve();
+        }, delay)
+    );
+
+    let n1 = m - l + 1;
+    let n2 = r - m;
+
+    // creates temp arrays
+    let L = new Array(n1);
+    let R = new Array(n2);
+
+    // populate temp arrays
+    for(let i = 0; i < n1; i++){
+        L[i] = myArr[l + i];
+    }
+    for(let j = 0; j < n2; j++){
+        R[j] = myArr[m + 1 + j];
+    }
+
+    // initial indexes of subarrays
+    let i = 0;
+    let j = 0; 
+    let k = l;
+
+    while(i < n1 && j < n2){
+        if(L[i] <= R[j]){
+            myArr[k] = L[i];
+            i++;
+        }else{
+            myArr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // copy remaining elements of L
+    while(i < n1){
+        myArr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // copy remaining elements of R
+    while(j < n2){
+        myArr[k] = R[j];
+        j++;
+        k++;
+    }
+
+    // change colors to random if not done, or green if done
+    if(k == document.getElementById("num-items").value){
+        for(let i = l; i < k; i++){
+            blocks[i].innerHTML = `<label class='block_id'>${myArr[i]}</label>`;
+            blocks[i].style.height = `${myArr[i] * 2}%`;
+            blocks[i].style.backgroundColor = "#13CE66";
+        } 
+    }else{
+        let color = getRandomColor();
+        for(let i = l; i < k; i++){
+            blocks[i].innerHTML = `<label class='block_id'>${myArr[i]}</label>`;
+            blocks[i].style.height = `${myArr[i] * 2}%`;
+            blocks[i].style.backgroundColor = color;
+        } 
+    }
+    
 }
