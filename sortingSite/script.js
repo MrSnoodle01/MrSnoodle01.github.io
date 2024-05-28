@@ -144,6 +144,10 @@ async function algoPick(el){
             console.log("heap sort");
             await heapSort(blocks);
             break;
+        case 'Bogo Sort':
+            console.log("why bogo sort");
+            await bogoSort(blocks);
+            break;
         default:
             break;
     }
@@ -519,5 +523,43 @@ async function heapify(blocks, N, i){
     if(largest != i){
         await swap(blocks, i, largest);
         await heapify(blocks, N, largest);
+    }
+}
+
+// bogo sort function
+async function bogoSort(blocks){
+    while(!isSorted(blocks))
+        await shuffle(blocks);
+    for(let i = 0; i < blocks.length; i++){
+        blocks[i].style.backgroundColor = "#13CE66"
+    }
+}
+
+// checks if given array is sorted
+function isSorted(blocks){
+    for(let i = 1; i < blocks.length; i++)
+        if(Number(blocks[i].childNodes[0].innerText) < Number(blocks[i-1].childNodes[0].innerText))
+            return false;
+    return true;
+}
+
+// randomly shuffles given array
+async function shuffle(blocks){
+    await new Promise((resolve) =>
+        setTimeout(() => {
+            resolve();
+        }, delay)
+    )
+
+    for(let i = 0; i < myArr.length; i++){
+        let ind = Math.floor(Math.random() * myArr.length);
+        let temp = myArr[ind];
+        myArr[ind] = myArr[myArr.length-i-1];
+        myArr[myArr.length-i-1] = temp;
+    }
+
+    for(let i = 0; i < blocks.length; i++){
+        blocks[i].innerHTML = `<label class='block_id'>${myArr[i]}</label>`;
+        blocks[i].style.height = `${myArr[i] * 2}%`;
     }
 }
