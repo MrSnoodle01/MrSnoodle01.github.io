@@ -1,4 +1,90 @@
+:root {
+    --width: 100%;
+}
+
 h1{
     color: #8fdee6;
+    text-align: center;
+}
+
+input[type=text], select{
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.button{
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    color:black;
+    border: 2px solid #8dca6d;
+    cursor: pointer;
+    text-align: center;
+    font-size: 25px;
+    width: 50%;
+    border-radius: 7px;
+    transition-duration: 0.4s;
+}
+
+.button[disabled]:hover{
+    background-color: #ffffff;
+    color:black;
+    cursor: not-allowed;
+}
+
+.button:hover, #home-button:hover{
+    background-color: #8dca6d;
+    color:white;
+}
+
+#home-button{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    height: 7%;
+    width: 7%;
+    background-color: #ffffff;
+    color:black;
+    border: 2px solid #8dca6d;
+    cursor: pointer;
+    border-radius: 7px;
+    transition-duration: 0.4s;
+    font-size: 20px;
+    text-align: center;
+}
+
+#left-container{
+    height: 100%;
+    width: 20%;
+    left: 0px;
+    top: 10%;
+    position: absolute;
+}
+
+/* bar background */
+#array {
+    background-color: black;
+    height: 70%;
+    width: 60%;
+    position: absolute;
+    top: 25%;
+    left: 20%;
+}
+ 
+/* bar */
+.block {
+    width: var(--width);
+    background-color: #6b5b95;
+    position: absolute;
+    bottom: 0px;
+    transition: 0.2s all ease;
+}
+ 
+/* number above bar */
+.block_id {
+    font-size: 80%;
+    position: absolute;
+    color: black;
+    margin-top: -1px;
+    width: 100%;
     text-align: center;
 }

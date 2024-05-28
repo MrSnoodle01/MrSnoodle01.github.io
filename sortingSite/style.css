@@ -49,6 +49,7 @@ input[type=text], select{
     border-radius: 7px;
     transition-duration: 0.4s;
     font-size: 20px;
+    text-align: center;
 }
 
 #left-container{
