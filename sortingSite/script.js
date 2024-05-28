@@ -71,6 +71,11 @@ async function algoPick(el){
             console.log("merge sort");
             await mergeSort(blocks, 0, blocks.length - 1);
             break;
+        case 'Quick Sort':
+            console.log("quick sort");
+            delay *= 2;
+            await quickSort(blocks, 0, blocks.length - 1);
+            break;
         default:
             break;
     }
@@ -365,5 +370,40 @@ async function merge(myArr, l, m, r){
             blocks[i].style.backgroundColor = color;
         } 
     }
-    
+}
+
+// quick sort function
+async function quickSort(blocks, low, high){
+    if(low < high){
+        // partition index
+        let pi = await partition(blocks, low, high);
+
+        // sepeartely sort elements before & after pivot
+        await quickSort(blocks, low, pi - 1);
+        blocks[low].style.backgroundColor = "#13CE66";
+        await quickSort(blocks, pi + 1, high);
+        blocks[high].style.backgroundColor = "#13CE66";
+    }
+}
+
+// partition function for quick sort
+// returns partition index
+async function partition(blocks, low, high){
+    let pivot = Number(blocks[high].childNodes[0].innerText);
+    blocks[high].style.backgroundColor = "#e88e17";
+
+    let i = low - 1;
+
+    for(let j = low; j <= high - 1; j++){
+        // if current element < pivot
+        if(Number(blocks[j].childNodes[0].innerText) < pivot){
+            i++;
+            await swap(blocks, i, j);
+        }
+    }
+
+    // swap pivot
+    await swap(blocks, i + 1, high);
+    blocks[i + 1].style.backgroundColor = "#13CE66"
+    return i + 1;
 }
