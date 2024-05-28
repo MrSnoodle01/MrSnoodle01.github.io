@@ -2,7 +2,17 @@ const MAX = 50;
 var delay = 0;
 var myArr = [];
 var blocks;
+var numItems = 0;
 var container = document.getElementById("array");
+
+// checks if custom input has been chosen
+document.getElementById("customInput").oninput = function(){
+    if(customInput.checked){
+        document.getElementById("custom").style.display = "block";
+    }else{
+        document.getElementById("custom").style.display = "none";
+    }
+}
 
 // gets the value of the speed slider
 document.getElementById("speedSlider").oninput = function(){
@@ -18,16 +28,13 @@ document.getElementById('home-button').addEventListener('click', () =>{
 
 // when user clicks submit button begin the sorting process
 document.getElementById('submit').addEventListener('click', () =>{
-    let numItems = document.getElementById("num-items").value;
+    numItems = document.getElementById("num-items").value;
 
     // make sure user's number is at more than 0 and less than 101
     if(numItems > 100 || numItems < 1){
         alert("please enter a number greater than 0 and less than 101");
         return;
     }
-
-    // disables button so that graphs cant overlap
-    document.getElementById('submit').disabled = true;
 
     // gets delay value in case that user didnt touch the slider
     delay = document.getElementById("speedSlider").value;
@@ -37,12 +44,21 @@ document.getElementById('submit').addEventListener('click', () =>{
     // clear old bars
     document.getElementById("array").innerHTML = "";
 
+    // get custom numbers if selected
+    if(document.getElementById("customInput").checked){
+        if(!customArray())
+            return;
+    }else{
+        // generate random array and cooresponding divs
+        generateArray(numItems);
+    }
+
+    // disables button so that graphs cant overlap
+    document.getElementById('submit').disabled = true;
+
     // make bar widths a percentage instead of number of pixels
     let item = document.querySelector(':root');
     item.style.setProperty('--width', 100/numItems + '%');
-
-    // generate array and cooresponding divs
-    generateArray(numItems);
 
     blocks = document.querySelectorAll(".block");
 
@@ -50,6 +66,55 @@ document.getElementById('submit').addEventListener('click', () =>{
     let el = document.getElementById('options');
     algoPick(el);
 })
+
+// creates and error checks custom arrays
+function customArray(){
+    myArr = document.getElementById("numberInput").value.split(',');
+    numItems = myArr.length;
+    // bound checks
+    if(numItems <= 1){
+        alert("Please enter at least 2 numbers");
+        return false;;
+    }
+    if(numItems > 100){
+        alert("Please enter 100 or less items");
+        return false;;
+    }
+    for(let i = 0; i < myArr.length; i++){
+        // bound check
+        if(myArr[i] > 50 || myArr[i] < 1){
+            alert("A number that you have entered is greater than 100 or less than 1. Please try again");
+            return false;
+        }
+        if(!/^[0-9]*$/.test(myArr[i])){
+            alert("You have entered a non-number. Please try again");
+            return false;
+        }
+
+        let value = Number(myArr[i]);
+
+        // create element div
+        let array_ele = document.createElement("div");
+
+        // adding class 'block' to div
+        array_ele.classList.add("block",i);
+
+        // add height to bars
+        array_ele.style.height = `${value * 2}%`;
+        // move bars over
+        array_ele.style.transform = `translate(${i * 100}%)`;
+
+        // creating label element for displaying size of particular block
+        let array_ele_label = document.createElement("label");
+        array_ele_label.classList.add("block_id");
+        array_ele_label.innerText = value;
+
+        // appending created elemets to index.html
+        array_ele.appendChild(array_ele_label);
+        container.appendChild(array_ele);
+    }
+    return true;
+}
 
 // picks algorithm from user
 // important to use await so button stays disabled
