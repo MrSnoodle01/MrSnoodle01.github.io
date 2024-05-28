@@ -2,7 +2,6 @@ const MAX = 50;
 var delay = 0;
 var myArr = [];
 var blocks;
-var numItems = 0;
 var container = document.getElementById("array");
 
 // checks if custom input has been chosen
@@ -28,7 +27,7 @@ document.getElementById('home-button').addEventListener('click', () =>{
 
 // when user clicks submit button begin the sorting process
 document.getElementById('submit').addEventListener('click', () =>{
-    numItems = document.getElementById("num-items").value;
+    let numItems = document.getElementById("num-items").value;
 
     // make sure user's number is at more than 0 and less than 101
     if(numItems > 100 || numItems < 1){
@@ -141,6 +140,10 @@ async function algoPick(el){
             delay *= 2;
             await quickSort(blocks, 0, blocks.length - 1);
             break;
+        case 'Heap Sort':
+            console.log("heap sort");
+            await heapSort(blocks);
+            break;
         default:
             break;
     }
@@ -149,7 +152,7 @@ async function algoPick(el){
 
 // generate array of blocks
 function generateArray(numItems){
-    // let tempArray = [4,10,11,20,50];
+    // let tempArray = [4,10,3,5,1];
     for(let i = 0; i < numItems; i++){
         // get value between 1 and MAX
         let value = Math.ceil(Math.random() * MAX);
@@ -471,4 +474,50 @@ async function partition(blocks, low, high){
     await swap(blocks, i + 1, high);
     blocks[i + 1].style.backgroundColor = "#13CE66"
     return i + 1;
+}
+
+// heap sort function
+async function heapSort(blocks){
+    // rearrange array to build heap
+    for(let i = Math.floor(blocks.length/2) - 1; i >= 0; i--){
+        await heapify(blocks, blocks.length, i);
+    }
+
+    // extract each element from heap
+    for(let i = blocks.length - 1; i > 0; i--){
+        // move current root to end
+        await swap(blocks, 0, i);
+        blocks[i].style.backgroundColor = "#13CE66";
+        await heapify(blocks, i, 0);
+    }
+    blocks[0].style.backgroundColor = "#13CE66";
+}
+
+// heapify a subtree with i root and N size
+async function heapify(blocks, N, i){
+    let largest = i;
+    let l = 2 * i + 1;
+    let r = 2 * i + 2;
+
+    await new Promise((resolve) =>
+        setTimeout(() => {
+            resolve();
+        }, delay)
+    )
+
+    // if left child is greater than root
+    if(l < N && Number(blocks[l].childNodes[0].innerText) > Number(blocks[largest].childNodes[0].innerText)){
+        largest = l;
+    }
+
+    // if right child is greater than root
+    if(r < N && Number(blocks[r].childNodes[0].innerText) > Number(blocks[largest].childNodes[0].innerText)){
+        largest = r;
+    }
+
+    // if largest is not the root
+    if(largest != i){
+        await swap(blocks, i, largest);
+        await heapify(blocks, N, largest);
+    }
 }
