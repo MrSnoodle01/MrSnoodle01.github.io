@@ -1,5 +1,6 @@
 const MAX = 100;
 var delay = 0;
+var myArr = [];
 var container = document.getElementById("array");
 
 // gets the value of the speed slider
@@ -49,7 +50,7 @@ document.getElementById('submit').addEventListener('click', () =>{
     item.style.setProperty('--width', 100/numItems + '%');
 
     // get item to be searched for
-    let index = 0;
+    var index = 0;
     if(document.getElementById("customInput").checked){
         index = Number(document.getElementById("numberInput").value);
         // bound checking
@@ -67,24 +68,30 @@ document.getElementById('submit').addEventListener('click', () =>{
 
     var blocks = document.querySelectorAll(".block");
 
-    var searchValue = blocks[index].childNodes[0].innerText;
-    blocks[index].style.backgroundColor = "#bfa615";
-
     // disables button so that graphs cant overlap
     document.getElementById('submit').disabled = true;
 
     // get which algorithm is chosen by user
     let el = document.getElementById('options');
-    algoPick(el, blocks, searchValue);
+    algoPick(el, blocks, index);
 })
 
 // picks algorithm from user
 // important to use await so button stays disabled
-async function algoPick(el, blocks, searchValue){
+async function algoPick(el, blocks, index){
     switch(el.options[el.selectedIndex].innerHTML){
         case 'Linear Search':
             console.log("linear search");
+            var searchValue = Number(blocks[index].childNodes[0].innerText);
+            blocks[index].style.backgroundColor = "#bfa615";
             await linearSearch(blocks, searchValue);
+            break;
+        case 'Binary Search':
+            console.log("binary search");
+            await bubbleSort(blocks);
+            var searchValue = Number(blocks[index].childNodes[0].innerText);
+            blocks[index].style.backgroundColor = "#bfa615";
+            await binarySearch(blocks, searchValue);
             break;
         default:
             break;
@@ -103,7 +110,7 @@ function generateArray(numItems){
             value = Math.ceil(Math.random() * MAX);
         tempArr[i] = value;
         // let value = tempArray[i];
-        // myArr[i] = value;
+        myArr[i] = value;
 
         // create element div
         let array_ele = document.createElement("div");
@@ -127,6 +134,15 @@ function generateArray(numItems){
     }
 }
 
+// checks if num is in arr
+function isIn(arr, num){
+    for(let i = 0; i < arr.length; i++){
+        if(arr[i] == num)
+            return true;
+    }
+    return false;
+}
+
 // swaps two blocks
 function swap(blocks, index1, index2){
     return new Promise((resolve) => {
@@ -143,17 +159,26 @@ function swap(blocks, index1, index2){
                 blocks[index2].childNodes[0].innerHTML = temp1;
                 blocks[index2].style.height = temp2;
                 resolve();
-            }, delay/2);
+            }, 0);
         });
     });
 }
 
-function isIn(arr, num){
-    for(let i = 0; i < arr.length; i++){
-        if(arr[i] == num)
-            return true;
+// sorting algorithm for lists that need to be sorted
+async function bubbleSort(blocks){
+    // BubbleSort Algorithm
+    for (let i = 0; i < blocks.length; i++) {
+        for (let j = 0; j < blocks.length - i - 1; j++) {
+ 
+            let value1 = Number(blocks[j].childNodes[0].innerHTML);
+            let value2 = Number(blocks[j + 1].childNodes[0].innerHTML);
+ 
+            // To compare value of two blocks
+            if (value1 > value2) {
+                await swap(blocks, j, j+1);
+            }
+        }
     }
-    return false;
 }
 
 // linear search function
@@ -174,4 +199,37 @@ async function linearSearch(blocks, searchValue){
         
 }
 
+// binary search function
+async function binarySearch(blocks, searchValue){
+    let low = 0;
+    let high = blocks.length - 1;
+    let mid = 0;
+    while(high >= low){
+        await new Promise((resolve) =>
+            setTimeout(() => {
+                resolve();
+            }, delay*3)
+        );
 
+        mid = low + Math.floor((high-low)/2);
+        
+        // if element is midpoint
+        if(Number(blocks[mid].childNodes[0].innerText) == searchValue){
+            blocks[mid].style.backgroundColor = "#13CE66";
+            for(let i = 0; i < blocks.length; i++)
+                if(Number(blocks[i].childNodes[0].innerText) != searchValue)
+                    blocks[i].style.backgroundColor = "#FF4949";
+            return;
+        }else if(Number(blocks[mid].childNodes[0].innerText) > searchValue){  // if element is smaller than mid
+            high = mid - 1;
+            for(let i = mid; i < blocks.length; i++)
+                if(Number(blocks[i].childNodes[0].innerText) != searchValue)
+                    blocks[i].style.backgroundColor = "#FF4949";
+        }else{ // if element is larger than mid
+            low = mid + 1;
+            for(let i = low; i >= 0; i--)
+                if(Number(blocks[i].childNodes[0].innerText) != searchValue)
+                    blocks[i].style.backgroundColor = "#FF4949";
+        }
+    }
+} 
