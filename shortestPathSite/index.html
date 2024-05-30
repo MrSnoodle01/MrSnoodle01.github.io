@@ -7,6 +7,36 @@
         <link rel="stylesheet" href="style.css" />
     </head>
     <body style="background-color: #011627">
-        <h1>Welcome, Idk what im doing for the shortest path site yet!</h1>
+        <h1>Sort some things!</h1>
+        <button type="button" id="home-button">Home</button>
+        <div id="left-container" class="container">
+            <div class="input-row">
+                <label for="options" style="color: #8fdee6">Choose a Shortest Path Algorithm:</label>
+                <select name="options" id="options">
+                    <option value="djikstras">Dikstra's Algorithm</option>
+                </select><br><br>
+            </div>
+            <div class="input-row">
+                <label for="num-items" style="color: #8fdee6">Choose how many items you would like to find the shortest path:</label>
+                <input type="number" id="num-items" name="num-items" min="2" value="16"><br><br> 
+            </div>
+            <div class="slidecontainer">
+                <label for="speedSlider" style="color: #8fdee6">Choose how fast you would like the program to run:</label>
+                <input type="range" min="1" max="250" value="125" class="slider" id="speedSlider"><br><br>
+            </div>
+            <div id="custom">
+                <label for="customText" style="color: #8fdee6">
+                    Please enter "start node,weight,end node" separated by new lines<br>
+                    start node/end node = [A-Z] weight <= 20
+                    ex:<br>
+                    A,5,B<br>
+                    B,7,C<br>
+                </label>
+                <textarea name="text" cols="10%" rows="20%" id="customText"></textarea>
+            </div>
+            <button type="button" class="button" id="submit">Find shortest path!</button> 
+        </div>
+        <div id="array"></div>
+        <script src="script.js"></script>
     </body>
 </html>
