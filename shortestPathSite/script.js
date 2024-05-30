@@ -1,6 +1,7 @@
 const MAX = 20;
 var delay = 0;
 var nodeArr = [];
+var connectionsArr = [];
 var container = document.getElementById("array");
 
 // connection class to connect nodes
@@ -42,6 +43,7 @@ document.getElementById('submit').addEventListener('click', () =>{
     // clear old bars
     document.getElementById("array").innerHTML = "";
 
+    getConnections();
     generateArray(numItems);
 
     // disables button so that graphs cant overlap
@@ -66,6 +68,19 @@ async function algoPick(el){
     document.getElementById('submit').disabled = false;
 }
 
+// turn user input into an array of connections
+function getConnections(){
+    let input = document.getElementById('customText').value;
+    let j = 0;
+    for(let i = 0; i < input.length; i+=6){
+        let tempObj = new connection(input[i], input[i+2], input[i+4]);
+        connectionsArr[j] = tempObj;
+        j++;
+    }
+    for(let i = 0; i < connectionsArr.length; i++){
+    }
+}
+
 // generate array of nodes and connects them
 function generateArray(numItems){
     let characters = 'SABCDEFGHIJKLMNOPQRTUVWXYZ'
@@ -82,14 +97,15 @@ function generateArray(numItems){
         // create element div
         let array_ele = document.createElement("div");
 
+        // add unique id to div
+        array_ele.id = `node ${value}`;
+
         // add class node to div
         array_ele.classList.add("node");
 
         // move nodes to correct location
         // TODO: MAKE THIS DYNAMICALLY WORK WHEN CHANGING SCREEN SIZES
         array_ele.style.transform = `translate(${backgroundWidth*offsetX}px, ${backgroundHeight*offsetY}px)`;
-
-        // array_ele.style.transform = `translateY(${offset*100}%)`;
 
         // creating label element for displaying node identifier
         let array_ele_label = document.createElement("label");
@@ -106,6 +122,23 @@ function generateArray(numItems){
         }else{
             offsetX += 1/(offsetVal - .5);
         }
+    }
+
+    // add connections to nodes
+    for(let i = 0; i < connectionsArr.length; i++){
+        let start = document.getElementById(`node ${connectionsArr[i].start}`);
+        let startPos = start.getBoundingClientRect();
+        let startX = startPos.left;
+        let startY = startPos.top;
+        console.log(startX, startY);
+
+        let end = document.getElementById(`node ${connectionsArr[i].end}`);
+        let endPos = end.getBoundingClientRect();
+        let endX = endPos.left;
+        let endY = endPos.top;
+
+        let line = document.getElementById('array');s
+        line.innerHTML += `<svg><line x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}" stroke="white"/></svg>`;
     }
 }
 
