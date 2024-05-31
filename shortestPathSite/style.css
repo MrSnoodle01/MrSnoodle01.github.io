@@ -56,16 +56,6 @@ input[type=text], select{
     position: absolute;
 }
 
-/* background */
-/* #array {
-    background-color: black;
-    height: 80%;
-    width: 60%;
-    position: absolute;
-    top: 10%;
-    left: 20%;
-} */
- 
 #canvas{
     background-color: black;
     height: 80%;

@@ -49,9 +49,6 @@ document.getElementById('submit').addEventListener('click', () =>{
     // fast is to right, slow is to left
     delay = (delay - 250) * (-1);
 
-    // clear old bars
-    // document.getElementById("array").innerHTML = "";
-    
     // clear old nodes
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -73,9 +70,9 @@ document.getElementById('submit').addEventListener('click', () =>{
 // important to use await so button stays disabled
 async function algoPick(el){
     switch(el.options[el.selectedIndex].innerHTML){
-        case "Djikstra's algorithm":
+        case "Djikstra's Algorithm":
             console.log("djikstra's algorithm");
-            await djikstras(blocks);
+            await djikstras();
             break;
         default:
             break;
@@ -107,6 +104,7 @@ function generateArray(numItems){
     let backgroundWidth = canvas.width;
     let width = canvas.width*.1;
     let height = canvas.height*.1;
+
     for(let i = 0; i < numItems; i++){
         let x = parseInt(backgroundWidth*offsetY);
         let y = parseInt(backgroundHeight*offsetX);
@@ -117,6 +115,7 @@ function generateArray(numItems){
         // add nodes to canvas
         context.fillStyle = "white";
         context.fillRect(x, y, width, height);
+        context.font = "50px serif";
         context.fillStyle = "black";
         context.fillText(value, x+(width/2), y+(height/2));
 
@@ -128,8 +127,6 @@ function generateArray(numItems){
         }
     }
 
-    console.log(connectionsArr.length);
-    console.log(nodeArr.length);
     // add connections to nodes
     for(let i = 0; i < connectionsArr.length; i++){
         // get start and end coordinates
@@ -148,10 +145,11 @@ function generateArray(numItems){
         context.beginPath();
         context.moveTo(startX+(width/2), startY+(height/2));
         context.lineTo(endX+(width/2), endY+(height/2));
+        context.lineWidth = 5;
         context.stroke();
     }
 }
 
 function djikstras(){
-
+    
 }
