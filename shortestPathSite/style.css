@@ -57,15 +57,25 @@ input[type=text], select{
 }
 
 /* background */
-#array {
+/* #array {
     background-color: black;
     height: 80%;
     width: 60%;
     position: absolute;
     top: 10%;
     left: 20%;
-}
+} */
  
+#canvas{
+    background-color: black;
+    height: 80%;
+    width: 60%;
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    image-rendering: pixelated;
+}
+
 .node{
     border-radius: 50%;
     width: 6.5%;
