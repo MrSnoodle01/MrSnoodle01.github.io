@@ -8,6 +8,10 @@ input[type=text], select{
     margin-bottom: 10px;
 }
 
+table,th,td{
+    border: 1px solid white;
+}
+
 .button{
     margin-bottom: 10px;
     background-color: #ffffff;
@@ -52,6 +56,14 @@ input[type=text], select{
     height: 100%;
     width: 20%;
     left: 0px;
+    top: 10%;
+    position: absolute;
+}
+
+#right-container{
+    height: 100%;
+    width: 20%;
+    left: 80%;
     top: 10%;
     position: absolute;
 }

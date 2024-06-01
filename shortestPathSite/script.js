@@ -52,6 +52,7 @@ document.getElementById('submit').addEventListener('click', () =>{
     // clear old nodes
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
+    document.getElementById("table").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>"
     connectionsArr = [];
     nodeArr = [];
 
@@ -70,9 +71,9 @@ document.getElementById('submit').addEventListener('click', () =>{
 // important to use await so button stays disabled
 async function algoPick(el){
     switch(el.options[el.selectedIndex].innerHTML){
-        case "Djikstra's Algorithm":
-            console.log("djikstra's algorithm");
-            await djikstras();
+        case "Dijkstra's Algorithm":
+            console.log("dijkstra's algorithm");
+            await dijkstras();
             break;
         default:
             break;
@@ -125,6 +126,18 @@ function generateArray(numItems){
         }else{
             offsetX += 1/(offsetVal - .5);
         }
+
+        // add node to table
+        const table = document.getElementById('table');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td style="color:#8fdee6">
+        ${value}
+        </td>
+        <td style="color:#8fdee6">
+        INF
+        </td>`;
+        table.appendChild(row);
     }
 
     // add connections to nodes
@@ -153,27 +166,29 @@ function generateArray(numItems){
             endX = tempEnd.x + width/2;
         }
         if(tempStart.y > tempEnd.y){ // start is below the end
-            console.log("below with ", tempStart.value, " ", tempEnd.value);
             startY = tempStart.y;
             endY = tempEnd.y + height;
         }else if(tempStart.y < tempEnd.y){ // start is above  the end
-            console.log("above with ", tempStart.value, " ", tempEnd.value);
             startY = tempStart.y + height;
             endY = tempEnd.y;
         }else{ // start and end are in same row
-            console.log("same row with ", tempStart.value, " ", tempEnd.value);
             startY = tempStart.y + height/2;
             endY = tempEnd.y + height/2;
         }
 
+        // draw line between nodes
         context.strokeStyle = "blue";
         context.beginPath();
         context.lineWidth = 5;
         drawArrow(context, startX, startY, endX, endY);
         context.stroke();
+        context.font = "50px serif";
+        context.fillStyle = "orange";
+        context.fillText(connectionsArr[i].weight, (startX+endX)/2, (startY+endY)/2);
     }
 }
 
+// function to draw line between nodes with an arrow at the end
 function drawArrow(context, startX, startY, endX, endY){
     let headLen = 10;
     let dx = endX - startX;
@@ -186,6 +201,7 @@ function drawArrow(context, startX, startY, endX, endY){
     context.lineTo(endX - headLen * Math.cos(angle+Math.PI/6), endY - headLen * Math.sin(angle+Math.PI/6));
 }
 
-function djikstras(){
+// dijkstras algorithm
+function dijkstras(){
     
 }

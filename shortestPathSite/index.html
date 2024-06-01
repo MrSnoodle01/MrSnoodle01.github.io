@@ -13,7 +13,7 @@
             <div class="input-row">
                 <label for="options" style="color: #8fdee6">Choose a Shortest Path Algorithm:</label>
                 <select name="options" id="options">
-                    <option value="djikstras">Djikstra's Algorithm</option>
+                    <option value="dijkstras">Dijkstra's Algorithm</option>
                 </select><br><br>
             </div>
             <div class="input-row">
@@ -37,6 +37,14 @@
             <button type="button" class="button" id="submit">Find shortest path!</button> 
         </div>
         <canvas id="canvas" height="1080px" width="1920px"></canvas>
+        <div id="right-container" class="container">
+            <table id="table" style="width:100%">
+                <tr style="color:#8fdee6">
+                    <th>node</th>
+                    <th>distance from start</th>
+                </tr>
+            </table>
+        </div>
         <script src="script.js"></script>
     </body>
 </html>
