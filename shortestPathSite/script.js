@@ -133,21 +133,57 @@ function generateArray(numItems){
         let startX = 0, startY = 0, endX = 0, endY = 0;
         for(let j = 0; j < nodeArr.length; j++){
             if(nodeArr[j].value == connectionsArr[i].start){
-                startX = nodeArr[j].x;
-                startY = nodeArr[j].y;
+                var tempStart = nodeArr[j];
             }
             if(nodeArr[j].value == connectionsArr[i].end){
-                endX = nodeArr[j].x;
-                endY = nodeArr[j].y;
+                var tempEnd = nodeArr[j];
             }
         }
-        context.strokeStyle = "white";
+        
+        // change where connection starts/ends 
+        // based on where nodes are in realtion to eachother
+        if(tempStart.x > tempEnd.x){ // start is further right than end
+            startX = tempStart.x;
+            endX = tempEnd.x + width;
+        }else if(tempStart.x < tempEnd.x){ // start is further left than end
+            startX = tempStart.x + width;
+            endX = tempEnd.x;
+        }else{ // start and end are in same column
+            startX = tempStart.x + width/2;
+            endX = tempEnd.x + width/2;
+        }
+        if(tempStart.y > tempEnd.y){ // start is below the end
+            console.log("below with ", tempStart.value, " ", tempEnd.value);
+            startY = tempStart.y;
+            endY = tempEnd.y + height;
+        }else if(tempStart.y < tempEnd.y){ // start is above  the end
+            console.log("above with ", tempStart.value, " ", tempEnd.value);
+            startY = tempStart.y + height;
+            endY = tempEnd.y;
+        }else{ // start and end are in same row
+            console.log("same row with ", tempStart.value, " ", tempEnd.value);
+            startY = tempStart.y + height/2;
+            endY = tempEnd.y + height/2;
+        }
+
+        context.strokeStyle = "blue";
         context.beginPath();
-        context.moveTo(startX+(width/2), startY+(height/2));
-        context.lineTo(endX+(width/2), endY+(height/2));
         context.lineWidth = 5;
+        drawArrow(context, startX, startY, endX, endY);
         context.stroke();
     }
+}
+
+function drawArrow(context, startX, startY, endX, endY){
+    let headLen = 10;
+    let dx = endX - startX;
+    let dy = endY - startY;
+    let angle = Math.atan2(dy, dx);
+    context.moveTo(startX, startY);
+    context.lineTo(endX, endY);
+    context.lineTo(endX - headLen * Math.cos(angle-Math.PI/6), endY - headLen * Math.sin(angle-Math.PI/6));
+    context.moveTo(endX, endY);
+    context.lineTo(endX - headLen * Math.cos(angle+Math.PI/6), endY - headLen * Math.sin(angle+Math.PI/6));
 }
 
 function djikstras(){
