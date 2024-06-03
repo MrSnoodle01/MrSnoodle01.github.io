@@ -2,7 +2,6 @@ const MAX = 20;
 var delay = 0;
 var nodeArr = [];
 var connectionsArr = [];
-// var container = document.getElementById("array");
 const canvas = document.getElementById("canvas");
 
 // connection class to connect nodes
@@ -15,10 +14,11 @@ class connection{
 }
 
 class node{
-    constructor(x, y, value){
+    distFromSrc = 1000;
+    constructor(x, y, letter){
         this.x = x;
         this.y = y;
-        this.value = value;
+        this.letter = letter;
     }
 }
 
@@ -73,7 +73,7 @@ async function algoPick(el){
     switch(el.options[el.selectedIndex].innerHTML){
         case "Dijkstra's Algorithm":
             console.log("dijkstra's algorithm");
-            await dijkstras();
+            await dijkstras(0);
             break;
         default:
             break;
@@ -109,17 +109,14 @@ function generateArray(numItems){
     for(let i = 0; i < numItems; i++){
         let x = parseInt(backgroundWidth*offsetY);
         let y = parseInt(backgroundHeight*offsetX);
-        let value = characters.charAt(i);
-        let tempObj = new node(x, y, value);
+        let letter = characters.charAt(i);
+        let tempObj = new node(x, y, letter);
         nodeArr.push(tempObj);
 
-        // add nodes to canvas
-        context.fillStyle = "white";
-        context.fillRect(x, y, width, height);
-        context.font = "50px serif";
-        context.fillStyle = "black";
-        context.fillText(value, x+(width/2), y+(height/2));
+        // // add nodes to canvas
+        drawNode(tempObj, width, height, "white");
 
+        // move x values to right and y values down
         if((i+1) % offsetVal == 0){
             offsetY += 1/(offsetVal - .5);
             offsetX = 0;
@@ -132,7 +129,7 @@ function generateArray(numItems){
         const row = document.createElement('tr');
         row.innerHTML = `
         <td style="color:#8fdee6">
-        ${value}
+        ${letter}
         </td>
         <td style="color:#8fdee6">
         INF
@@ -145,10 +142,10 @@ function generateArray(numItems){
         // get start and end coordinates
         let startX = 0, startY = 0, endX = 0, endY = 0;
         for(let j = 0; j < nodeArr.length; j++){
-            if(nodeArr[j].value == connectionsArr[i].start){
+            if(nodeArr[j].letter == connectionsArr[i].start){
                 var tempStart = nodeArr[j];
             }
-            if(nodeArr[j].value == connectionsArr[i].end){
+            if(nodeArr[j].letter == connectionsArr[i].end){
                 var tempEnd = nodeArr[j];
             }
         }
@@ -201,7 +198,35 @@ function drawArrow(context, startX, startY, endX, endY){
     context.lineTo(endX - headLen * Math.cos(angle+Math.PI/6), endY - headLen * Math.sin(angle+Math.PI/6));
 }
 
+// change value in table
+function tableChange(rowNum, newNum){
+    let table = document.getElementById("table");
+    let row = table.getElementsByTagName("tr")[rowNum];
+    let td = row.getElementsByTagName("td")[1];
+    td.innerHTML = newNum;
+}
+
+// draws a node on the canvas
+function drawNode(node, width, height, color){
+    let context = canvas.getContext("2d");
+
+    context.fillStyle = color;
+    context.fillRect(node.x, node.y, width, height);
+    context.font = "50px serif";
+    context.fillStyle = "black";
+    context.fillText(node.letter, node.x+(width/2), node.y+(height/2));
+}
+
+// find vertex with minimum distance from
+// set of verticies not included in shortes path tree
+function minDistance(dist, sptSet){
+
+}
+
 // dijkstras algorithm
-function dijkstras(){
-    
+function dijkstras(src){
+    // set start node distance to zero
+    tableChange(1, 0);
+
+    // drawNode(nodeArr[0], canvas.width*.1, canvas.height*.1, "#FF4949");
 }
