@@ -14,11 +14,11 @@ class connection{
 }
 
 class node{
-    distFromSrc = 1000;
     constructor(x, y, letter){
         this.x = x;
         this.y = y;
         this.letter = letter;
+        this.distFromSrc = 1000;
     }
 }
 
@@ -56,8 +56,9 @@ document.getElementById('submit').addEventListener('click', () =>{
     connectionsArr = [];
     nodeArr = [];
 
-    getConnections();
     generateArray(numItems);
+    addConnections();
+    addVisualConnections();
 
     // disables button so that graphs cant overlap
     document.getElementById('submit').disabled = true;
@@ -73,7 +74,7 @@ async function algoPick(el){
     switch(el.options[el.selectedIndex].innerHTML){
         case "Dijkstra's Algorithm":
             console.log("dijkstra's algorithm");
-            await dijkstras(0);
+            await dijkstras();
             break;
         default:
             break;
@@ -82,12 +83,22 @@ async function algoPick(el){
 }
 
 // turn user input into an array of connections
-function getConnections(){
+function addConnections(){
     let input = document.getElementById('customText').value;
     let j = 0;
     for(let i = 0; i < input.length; i+=6){
         // TODO: fix so that weight can work with more than just single digit numbers
-        let tempObj = new connection(input[i], input[i+2], input[i+4]);
+        // gets node from nodeArr with matching letter
+        let tempStart = "";
+        let tempEnd = "";
+        for(let j = 0; j < nodeArr.length; j++){
+            if(nodeArr[j].letter == input[i]){
+                tempStart = nodeArr[j];
+            }else if(nodeArr[j].letter == input[i+4]){
+                tempEnd = nodeArr[j];
+            }
+        }
+        let tempObj = new connection(tempStart, Number(input[i+2]), tempEnd);
         connectionsArr.push(tempObj);
         j++;
     }
@@ -136,19 +147,20 @@ function generateArray(numItems){
         </td>`;
         table.appendChild(row);
     }
+}
+
+// adds the visual part of connections
+function addVisualConnections(){
+    let width = canvas.width*.1
+    let height = canvas.height*.1;
+    let context = canvas.getContext("2d");
 
     // add connections to nodes
     for(let i = 0; i < connectionsArr.length; i++){
         // get start and end coordinates
         let startX = 0, startY = 0, endX = 0, endY = 0;
-        for(let j = 0; j < nodeArr.length; j++){
-            if(nodeArr[j].letter == connectionsArr[i].start){
-                var tempStart = nodeArr[j];
-            }
-            if(nodeArr[j].letter == connectionsArr[i].end){
-                var tempEnd = nodeArr[j];
-            }
-        }
+        var tempStart = connectionsArr[i].start;
+        var tempEnd = connectionsArr[i].end;
         
         // change where connection starts/ends 
         // based on where nodes are in realtion to eachother
@@ -185,6 +197,7 @@ function generateArray(numItems){
     }
 }
 
+
 // function to draw line between nodes with an arrow at the end
 function drawArrow(context, startX, startY, endX, endY){
     let headLen = 10;
@@ -217,16 +230,76 @@ function drawNode(node, width, height, color){
     context.fillText(node.letter, node.x+(width/2), node.y+(height/2));
 }
 
-// find vertex with minimum distance from
-// set of verticies not included in shortes path tree
-function minDistance(dist, sptSet){
+// sorting algorithm for dijkstras
+function insertionSort(arr, n){  
+    let i, key, j;  
+    for (i = 1; i < n; i++){  
+        key = arr[i];  
+        j = i - 1;  
+  
+        /* Move elements of arr[0..i-1], that are  
+        greater than key, to one position ahead  
+        of their current position */
+        while (j >= 0 && arr[j].distFromSrc > key.distFromSrc){  
+            arr[j + 1] = arr[j];  
+            j = j - 1;  
+        }  
+        arr[j + 1] = key;  
+    }  
+}  
 
+// adds the first node in array's connections to the array
+// either updating their distance or adding a new element
+function addToArray(src, arr){
+    // find connections where src is start
+    for(let i = 0; i < connectionsArr.length; i++){
+        if(connectionsArr[i].start == src){
+            // see if end node is already in array
+            // if not add it, if so update distance if needed
+            let isIn = false;
+            for(let j = 0; j < arr.length; j++){
+                if(arr[j] == connectionsArr[i].end){
+                    isIn = true;
+                }
+            }
+            if(!isIn){ // add node to array 
+                connectionsArr[i].end.distFromSrc = connectionsArr[i].start.distFromSrc + connectionsArr[i].weight;
+                arr.push(connectionsArr[i].end);
+                // TODO: ascii wont work here when letters are larger than S
+                tableChange((connectionsArr[i].end.letter).charCodeAt(0) - 63, connectionsArr[i].end.distFromSrc);
+            }else{ // node is in array, update distance if needed
+                for(let j = 0; j < arr.length; j++){
+                    if(arr[j] == connectionsArr[i].end){
+                        let tempDist = connectionsArr[i].start.distFromSrc + connectionsArr[i].weight;
+                        if(arr[j].distFromSrc > tempDist){
+                            arr[j].distFromSrc = tempDist;
+                            // TODO: ascii wont work here when letters are larger than S
+                            tableChange((arr[j].letter).charCodeAt(0) - 63, arr[j].distFromSrc);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // remove first item which is now fully processed
+    arr.shift();
+    // sort array
+    if(arr.length != 0){}
+        insertionSort(arr, arr.length);
 }
 
 // dijkstras algorithm
-function dijkstras(src){
+// creates sorted array of partially processed nodes
+// iterates through those nodes' connections to add others to array
+function dijkstras(){
     // set start node distance to zero
-    tableChange(1, 0);
+    nodeArr[0].distFromSrc = 0
+    tableChange(1, nodeArr[0].distFromSrc);
 
-    // drawNode(nodeArr[0], canvas.width*.1, canvas.height*.1, "#FF4949");
+    let arr = [nodeArr[0]];
+
+    // iterate through array until all nodes have been processed
+    while(arr.length != 0){
+        addToArray(arr[0], arr);
+    }
 }
