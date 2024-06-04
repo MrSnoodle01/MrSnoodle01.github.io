@@ -219,6 +219,13 @@ function tableChange(rowNum, newNum){
     td.innerHTML = newNum;
 }
 
+function getTableValue(rowNum){
+    let table = document.getElementById("table");
+    let row = table.getElementsByTagName("tr")[rowNum];
+    let td = row.getElementsByTagName("td")[1];
+    return td.innerText;
+}
+
 // draws a node on the canvas
 function drawNode(node, width, height, color){
     let context = canvas.getContext("2d");
@@ -263,10 +270,14 @@ function addToArray(src, arr){
                 }
             }
             if(!isIn){ // add node to array 
-                connectionsArr[i].end.distFromSrc = connectionsArr[i].start.distFromSrc + connectionsArr[i].weight;
-                arr.push(connectionsArr[i].end);
+                let tempDist = connectionsArr[i].start.distFromSrc + connectionsArr[i].weight;
                 // TODO: ascii wont work here when letters are larger than S
-                tableChange((connectionsArr[i].end.letter).charCodeAt(0) - 63, connectionsArr[i].end.distFromSrc);
+                if(Number(getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 63)) > tempDist
+                || getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 63) == "INF"){
+                    connectionsArr[i].end.distFromSrc = tempDist;
+                    tableChange((connectionsArr[i].end.letter).charCodeAt(0) - 63, connectionsArr[i].end.distFromSrc);
+                    arr.push(connectionsArr[i].end);
+                }
             }else{ // node is in array, update distance if needed
                 for(let j = 0; j < arr.length; j++){
                     if(arr[j] == connectionsArr[i].end){
@@ -282,6 +293,10 @@ function addToArray(src, arr){
         }
     }
     // remove first item which is now fully processed
+    console.log("before:");
+    for(let i = 0; i < arr.length; i++){
+        console.log(arr[i]);
+    }
     arr.shift();
     // sort array
     if(arr.length != 0){}
@@ -301,5 +316,10 @@ function dijkstras(){
     // iterate through array until all nodes have been processed
     while(arr.length != 0){
         addToArray(arr[0], arr);
+    }
+
+    console.log("here");
+    for(let i = 1; i < 7; i++){
+        console.log(getTableValue(i));
     }
 }
