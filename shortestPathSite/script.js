@@ -18,7 +18,7 @@ class node{
         this.x = x;
         this.y = y;
         this.letter = letter;
-        this.distFromSrc = 1000;
+        this.distFromSrc = 10000;
     }
 }
 
@@ -157,58 +157,60 @@ function addVisualConnections(){
 
     // add connections to nodes
     for(let i = 0; i < connectionsArr.length; i++){
-        // get start and end coordinates
-        let startX = 0, startY = 0, endX = 0, endY = 0;
-        var tempStart = connectionsArr[i].start;
-        var tempEnd = connectionsArr[i].end;
-        
-        // change where connection starts/ends 
-        // based on where nodes are in realtion to eachother
-        if(tempStart.x > tempEnd.x){ // start is further right than end
-            startX = tempStart.x;
-            endX = tempEnd.x + width;
-        }else if(tempStart.x < tempEnd.x){ // start is further left than end
-            startX = tempStart.x + width;
-            endX = tempEnd.x;
-        }else{ // start and end are in same column
-            startX = tempStart.x + width/2;
-            endX = tempEnd.x + width/2;
-        }
-        if(tempStart.y > tempEnd.y){ // start is below the end
-            startY = tempStart.y;
-            endY = tempEnd.y + height;
-        }else if(tempStart.y < tempEnd.y){ // start is above  the end
-            startY = tempStart.y + height;
-            endY = tempEnd.y;
-        }else{ // start and end are in same row
-            startY = tempStart.y + height/2;
-            endY = tempEnd.y + height/2;
-        }
-
         // draw line between nodes
-        context.strokeStyle = "blue";
-        context.beginPath();
-        context.lineWidth = 5;
-        drawArrow(context, startX, startY, endX, endY);
-        context.stroke();
-        context.font = "50px serif";
-        context.fillStyle = "orange";
-        context.fillText(connectionsArr[i].weight, (startX+endX)/2, (startY+endY)/2);
+        drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "blue", connectionsArr[i].weight);
     }
 }
 
+// function to draw line between nodes with an arrow at end and weight of connection
+// TODO: make arrows look better
+// TODO: make colors not overlap when redrawing
+function drawArrow(context, startNode, endNode, color, weight){
+        let startX = 0, startY = 0, endX = 0, endY = 0;
+        let width = canvas.width*.1
+        let height = canvas.height*.1;
+        
+        // change where connection starts/ends 
+        // based on where nodes are in realtion to eachother
+        if(startNode.x > endNode.x){ // start is further right than end
+            startX = startNode.x;
+            endX = endNode.x + width;
+        }else if(startNode.x < endNode.x){ // start is further left than end
+            startX = startNode.x + width;
+            endX = endNode.x;
+        }else{ // start and end are in same column
+            startX = startNode.x + width/2;
+            endX = endNode.x + width/2;
+        }
+        if(startNode.y > endNode.y){ // start is below the end
+            startY = startNode.y;
+            endY = endNode.y + height;
+        }else if(startNode.y < endNode.y){ // start is above  the end
+            startY = startNode.y + height;
+            endY = endNode.y;
+        }else{ // start and end are in same row
+            startY = startNode.y + height/2;
+            endY = endNode.y + height/2;
+        }
 
-// function to draw line between nodes with an arrow at the end
-function drawArrow(context, startX, startY, endX, endY){
     let headLen = 10;
     let dx = endX - startX;
     let dy = endY - startY;
     let angle = Math.atan2(dy, dx);
+    context.beginPath();
+    context.lineWidth = 5;
+    context.strokeStyle = color;
     context.moveTo(startX, startY);
     context.lineTo(endX, endY);
     context.lineTo(endX - headLen * Math.cos(angle-Math.PI/6), endY - headLen * Math.sin(angle-Math.PI/6));
     context.moveTo(endX, endY);
     context.lineTo(endX - headLen * Math.cos(angle+Math.PI/6), endY - headLen * Math.sin(angle+Math.PI/6));
+    context.stroke();
+    
+    // draw weight next to line
+    context.font = "50px serif";
+    context.fillStyle = "orange";
+    context.fillText(weight, (startX+endX)/2, (startY+endY)/2);
 }
 
 // change value in table
@@ -219,6 +221,7 @@ function tableChange(rowNum, newNum){
     td.innerHTML = newNum;
 }
 
+// returns value from table of rowNum's row
 function getTableValue(rowNum){
     let table = document.getElementById("table");
     let row = table.getElementsByTagName("tr")[rowNum];
@@ -257,10 +260,17 @@ function insertionSort(arr, n){
 
 // adds the first node in array's connections to the array
 // either updating their distance or adding a new element
-function addToArray(src, arr){
+async function addToArray(src, arr){
+    let context = canvas.getContext("2d");
     // find connections where src is start
     for(let i = 0; i < connectionsArr.length; i++){
         if(connectionsArr[i].start == src){
+            drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "red", connectionsArr[i].weight);
+            await new Promise((resolve) =>
+                setTimeout(() => {
+                    resolve();
+                }, delay)
+            );
             // see if end node is already in array
             // if not add it, if so update distance if needed
             let isIn = false;
@@ -290,36 +300,35 @@ function addToArray(src, arr){
                     }
                 }
             }
+            drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "blue", connectionsArr[i].weight);
         }
     }
     // remove first item which is now fully processed
-    console.log("before:");
-    for(let i = 0; i < arr.length; i++){
-        console.log(arr[i]);
-    }
+    // TODO: make this not override connctions going through node
+    drawNode(arr[0], canvas.width*.1, canvas.height*.1, "white");
     arr.shift();
     // sort array
     if(arr.length != 0){}
-        insertionSort(arr, arr.length);
+        await insertionSort(arr, arr.length);
 }
 
 // dijkstras algorithm
 // creates sorted array of partially processed nodes
 // iterates through those nodes' connections to add others to array
-function dijkstras(){
+async function dijkstras(){
     // set start node distance to zero
     nodeArr[0].distFromSrc = 0
     tableChange(1, nodeArr[0].distFromSrc);
-
     let arr = [nodeArr[0]];
 
     // iterate through array until all nodes have been processed
     while(arr.length != 0){
-        addToArray(arr[0], arr);
-    }
-
-    console.log("here");
-    for(let i = 1; i < 7; i++){
-        console.log(getTableValue(i));
+        await new Promise((resolve) =>
+            setTimeout(() => {
+                resolve();
+            }, delay)
+        );
+        drawNode(arr[0], canvas.width*.1, canvas.height*.1, "red");
+        await addToArray(arr[0], arr);
     }
 }
