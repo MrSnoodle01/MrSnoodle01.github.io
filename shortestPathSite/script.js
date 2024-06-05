@@ -59,6 +59,8 @@ document.getElementById('submit').addEventListener('click', () =>{
     generateArray(numItems);
     addConnections();
     addVisualConnections();
+    if(!inputCheck(numItems))
+        return;
 
     // disables button so that graphs cant overlap
     document.getElementById('submit').disabled = true;
@@ -85,29 +87,26 @@ async function algoPick(el){
 // turn user input into an array of connections
 function addConnections(){
     let input = document.getElementById('customText').value;
-    let j = 0;
-    for(let i = 0; i < input.length; i+=6){
-        // TODO: fix so that weight can work with more than just single digit numbers
-        // gets node from nodeArr with matching letter
+    let inputArr = input.split(/\n|,/);
+    console.log(inputArr);
+    for(let i = 0; i < inputArr.length; i+=3){
         let tempStart = "";
         let tempEnd = "";
         for(let j = 0; j < nodeArr.length; j++){
-            if(nodeArr[j].letter == input[i]){
-                tempStart = nodeArr[j];
-            }else if(nodeArr[j].letter == input[i+4]){
+            if(nodeArr[j].letter == inputArr[i])
+                tempStart = nodeArr[j]
+            else if(nodeArr[j].letter == inputArr[i+2])
                 tempEnd = nodeArr[j];
-            }
         }
-        let tempObj = new connection(tempStart, Number(input[i+2]), tempEnd);
+        let tempObj = new connection(tempStart, Number(inputArr[i+1]), tempEnd);
         connectionsArr.push(tempObj);
-        j++;
     }
 }
 
 //generate array of nodes and connects them
 function generateArray(numItems){
     const context = canvas.getContext("2d");
-    let characters = 'SABCDEFGHIJKLMNOPQRTUVWXYZ';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     // get square root of closest even square root of numItems to make nice square with nodes
     let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems)),2));
     let offsetX = 0;
@@ -147,6 +146,42 @@ function generateArray(numItems){
         </td>`;
         table.appendChild(row);
     }
+}
+
+// checks user input for errors
+function inputCheck(numItems){
+    let input = document.getElementById('customText').value;
+    let inputArr = input.split(/\n|,/);
+    for(let i = 0; i < inputArr.length; i+=3){
+        if(!/[A-Z]/.test(inputArr[i])){
+            alert("Please only enter start nodes from A-Z");
+            return false;
+        }
+        if(inputArr[i].length > 1){
+            alert("Please only enter single letter start nodes");
+            return false;
+        }
+        if(!/[0-9]/.test(Number(inputArr[i+1]))){
+            alert("Please only enter numbers for the weight");
+            return false;
+        }
+        if(Number(inputArr[i+1]) > 20 || Number(inputArr[i+1]) < 0){
+            alert("Please enter a weight less than 20 and greater than -1");
+        }
+        if(!/[A-Z]/.test(inputArr[i+2])){
+            alert("Please only enter end nodes from A-Z");
+            return false;
+        }
+        if(inputArr[i+2].length > 1){
+            alert("Please only enter single letter end nodes");
+            return false;
+        }
+        if(inputArr[i].charCodeAt(0)-64 > numItems || inputArr[i+2].charCodeAt(0)-64 > numItems){
+            alert("Please only enter node letters that will be visible on the graph");
+            return false;
+        }
+    }
+    return true;
 }
 
 // adds the visual part of connections
@@ -271,6 +306,7 @@ async function addToArray(src, arr){
                     resolve();
                 }, delay)
             );
+            // TODO: fix error if start node is same as end node
             // see if end node is already in array
             // if not add it, if so update distance if needed
             let isIn = false;
@@ -281,11 +317,10 @@ async function addToArray(src, arr){
             }
             if(!isIn){ // add node to array 
                 let tempDist = connectionsArr[i].start.distFromSrc + connectionsArr[i].weight;
-                // TODO: ascii wont work here when letters are larger than S
-                if(Number(getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 63)) > tempDist
-                || getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 63) == "INF"){
+                if(Number(getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 64)) > tempDist
+                || getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 64) == "INF"){
                     connectionsArr[i].end.distFromSrc = tempDist;
-                    tableChange((connectionsArr[i].end.letter).charCodeAt(0) - 63, connectionsArr[i].end.distFromSrc);
+                    tableChange((connectionsArr[i].end.letter).charCodeAt(0) - 64, connectionsArr[i].end.distFromSrc);
                     arr.push(connectionsArr[i].end);
                 }
             }else{ // node is in array, update distance if needed
@@ -294,8 +329,7 @@ async function addToArray(src, arr){
                         let tempDist = connectionsArr[i].start.distFromSrc + connectionsArr[i].weight;
                         if(arr[j].distFromSrc > tempDist){
                             arr[j].distFromSrc = tempDist;
-                            // TODO: ascii wont work here when letters are larger than S
-                            tableChange((arr[j].letter).charCodeAt(0) - 63, arr[j].distFromSrc);
+                            tableChange((arr[j].letter).charCodeAt(0) - 64, arr[j].distFromSrc);
                         }
                     }
                 }
@@ -332,3 +366,6 @@ async function dijkstras(){
         await addToArray(arr[0], arr);
     }
 }
+
+// TODO: add drag and drop ability
+// TODO: add current stack table
