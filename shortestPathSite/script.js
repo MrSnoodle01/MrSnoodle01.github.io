@@ -52,7 +52,7 @@ document.getElementById('submit').addEventListener('click', () =>{
     // clear old nodes
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
-    document.getElementById("table").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>"
+    document.getElementById("distTable").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>";
     connectionsArr = [];
     nodeArr = [];
 
@@ -88,15 +88,18 @@ async function algoPick(el){
 function addConnections(){
     let input = document.getElementById('customText').value;
     let inputArr = input.split(/\n|,/);
-    console.log(inputArr);
     for(let i = 0; i < inputArr.length; i+=3){
         let tempStart = "";
         let tempEnd = "";
         for(let j = 0; j < nodeArr.length; j++){
-            if(nodeArr[j].letter == inputArr[i])
-                tempStart = nodeArr[j]
-            else if(nodeArr[j].letter == inputArr[i+2])
+            if(nodeArr[j].letter == inputArr[i] && nodeArr[j].letter == inputArr[i+2]){
+                tempStart = nodeArr[j];
                 tempEnd = nodeArr[j];
+            }else if(nodeArr[j].letter == inputArr[i]){
+                tempStart = nodeArr[j]
+            }else if(nodeArr[j].letter == inputArr[i+2]){
+                tempEnd = nodeArr[j];
+            }
         }
         let tempObj = new connection(tempStart, Number(inputArr[i+1]), tempEnd);
         connectionsArr.push(tempObj);
@@ -135,7 +138,7 @@ function generateArray(numItems){
         }
 
         // add node to table
-        const table = document.getElementById('table');
+        const table = document.getElementById('distTable');
         const row = document.createElement('tr');
         row.innerHTML = `
         <td style="color:#8fdee6">
@@ -200,6 +203,7 @@ function addVisualConnections(){
 // function to draw line between nodes with an arrow at end and weight of connection
 // TODO: make arrows look better
 // TODO: make colors not overlap when redrawing
+// TODO: make arrow for if start node is same as end node
 function drawArrow(context, startNode, endNode, color, weight){
         let startX = 0, startY = 0, endX = 0, endY = 0;
         let width = canvas.width*.1
@@ -248,17 +252,17 @@ function drawArrow(context, startNode, endNode, color, weight){
     context.fillText(weight, (startX+endX)/2, (startY+endY)/2);
 }
 
-// change value in table
-function tableChange(rowNum, newNum){
-    let table = document.getElementById("table");
+// change value in a table
+function tableChange(rowNum, newNum, tableName, col){
+    let table = document.getElementById(tableName);
     let row = table.getElementsByTagName("tr")[rowNum];
-    let td = row.getElementsByTagName("td")[1];
+    let td = row.getElementsByTagName("td")[col];
     td.innerHTML = newNum;
 }
 
-// returns value from table of rowNum's row
+// returns value from distance table of rowNum's row
 function getTableValue(rowNum){
-    let table = document.getElementById("table");
+    let table = document.getElementById("distTable");
     let row = table.getElementsByTagName("tr")[rowNum];
     let td = row.getElementsByTagName("td")[1];
     return td.innerText;
@@ -306,7 +310,6 @@ async function addToArray(src, arr){
                     resolve();
                 }, delay)
             );
-            // TODO: fix error if start node is same as end node
             // see if end node is already in array
             // if not add it, if so update distance if needed
             let isIn = false;
@@ -320,7 +323,7 @@ async function addToArray(src, arr){
                 if(Number(getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 64)) > tempDist
                 || getTableValue((connectionsArr[i].end.letter).charCodeAt(0) - 64) == "INF"){
                     connectionsArr[i].end.distFromSrc = tempDist;
-                    tableChange((connectionsArr[i].end.letter).charCodeAt(0) - 64, connectionsArr[i].end.distFromSrc);
+                    tableChange((connectionsArr[i].end.letter).charCodeAt(0) - 64, connectionsArr[i].end.distFromSrc, "distTable", 1);
                     arr.push(connectionsArr[i].end);
                 }
             }else{ // node is in array, update distance if needed
@@ -329,7 +332,7 @@ async function addToArray(src, arr){
                         let tempDist = connectionsArr[i].start.distFromSrc + connectionsArr[i].weight;
                         if(arr[j].distFromSrc > tempDist){
                             arr[j].distFromSrc = tempDist;
-                            tableChange((arr[j].letter).charCodeAt(0) - 64, arr[j].distFromSrc);
+                            tableChange((arr[j].letter).charCodeAt(0) - 64, arr[j].distFromSrc, "distTable", 1);
                         }
                     }
                 }
@@ -352,20 +355,39 @@ async function addToArray(src, arr){
 async function dijkstras(){
     // set start node distance to zero
     nodeArr[0].distFromSrc = 0
-    tableChange(1, nodeArr[0].distFromSrc);
+    tableChange(1, nodeArr[0].distFromSrc, "distTable", 1);
     let arr = [nodeArr[0]];
-
+    
     // iterate through array until all nodes have been processed
     while(arr.length != 0){
+        // reset node array table
+        document.getElementById("stackTable").innerHTML = "<caption style='color:#8fdee6'>Current node array</caption><tr style='color:#8fdee6'><td>Node</td></tr><tr style='color:#8fdee6'><td>Dist</td></tr>";
+        let trs = document.querySelectorAll("#stackTable tr");
+        
+        // add array to node array table
+        for(let i = 0; i < arr.length; i++){
+            for(let tr of trs){
+                let td = document.createElement('td');
+                if(tr.innerText[0] == "N"){
+                    td.innerText = arr[i].letter;
+                }else{
+                    td.innerText = arr[i].distFromSrc;
+                }
+                tr.appendChild(td);
+            }
+        }
+        
         await new Promise((resolve) =>
             setTimeout(() => {
                 resolve();
-            }, delay)
+            }, delay*1.5)
         );
+        
         drawNode(arr[0], canvas.width*.1, canvas.height*.1, "red");
         await addToArray(arr[0], arr);
     }
+    // reset node array table
+    document.getElementById("stackTable").innerHTML = "<caption style='color:#8fdee6'>Current node array</caption><tr style='color:#8fdee6'><td>Node</td></tr><tr style='color:#8fdee6'><td>Dist</td></tr>";
 }
 
 // TODO: add drag and drop ability
-// TODO: add current stack table
