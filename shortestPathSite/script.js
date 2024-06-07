@@ -2,7 +2,8 @@ const MAX = 20;
 var delay = 0;
 var nodeArr = [];
 var connectionsArr = [];
-const canvas = document.getElementById("canvas");
+// const canvas = document.getElementById("canvas");
+var container = document.getElementById("screen");
 
 // connection class to connect nodes
 class connection{
@@ -14,25 +15,25 @@ class connection{
 }
 
 class node{
-    constructor(x, y, letter){
+    constructor(x, y, width, height, letter){
         this.x = x;
         this.y = y;
-        this.width = canvas.width*.1;
-        this.height = canvas.height*.1;
+        this.width = width;
+        this.height = height;
         this.letter = letter;
         this.distFromSrc = 10000;
     }
 
-    draw(color){
-        let context = canvas.getContext("2d");
-        context.fillStyle = color;
-        context.fillRect(this.x, this.y, this.width, this.height);
-        context.font = "50px serif";
-        context.fillStyle = "black";
-        context.fillText(this.letter, this.x+(this.width/2), this.y+(this.height/2));
-    }
+    // TODO: change colors of nodes during algorithm
+    // draw(color){
+    //     let context = canvas.getContext("2d");
+    //     context.fillStyle = color;
+    //     context.fillRect(this.x, this.y, this.width, this.height);
+    //     context.font = "50px serif";
+    //     context.fillStyle = "black";
+    //     context.fillText(this.letter, this.x+(this.width/2), this.y+(this.height/2));
+    // }
 }
-
 
 // gets the value of the speed slider
 document.getElementById("speedSlider").oninput = function(){
@@ -62,17 +63,19 @@ document.getElementById('submit').addEventListener('click', () =>{
     delay = (delay - 250) * (-1);
 
     // clear old nodes
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    // const context = canvas.getContext('2d');
+    // context.clearRect(0, 0, canvas.width, canvas.height);
+    document.getElementById("screensvg").innerHTML = "";
     document.getElementById("distTable").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>";
     connectionsArr = [];
     nodeArr = [];
 
     generateArray(numItems);
     addConnections();
-    addVisualConnections();
     if(!inputCheck(numItems))
         return;
+    addVisualConnections();
+    
 
     // disables button so that graphs cant overlap
     document.getElementById('submit').disabled = true;
@@ -120,26 +123,45 @@ function addConnections(){
 
 //generate array of nodes and connects them
 function generateArray(numItems){
-    const context = canvas.getContext("2d");
+    // const context = canvas.getContext("2d");
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     // get square root of closest even square root of numItems to make nice square with nodes
     let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems)),2));
     let offsetX = 0;
     let offsetY = 0;
-    let backgroundHeight = canvas.height;
-    let backgroundWidth = canvas.width;
-    let width = canvas.width*.1;
-    let height = canvas.height*.1;
+    let backgroundHeight = document.getElementById('screen').clientHeight;
+    let backgroundWidth = document.getElementById('screen').clientWidth;
+    let width = Math.floor(backgroundHeight*.15);
+    let height = Math.floor(backgroundWidth*.1);
 
     for(let i = 0; i < numItems; i++){
         let x = parseInt(backgroundWidth*offsetY);
         let y = parseInt(backgroundHeight*offsetX);
         let letter = characters.charAt(i);
-        let tempObj = new node(x, y, letter);
+        let tempObj = new node(x, y, width, height, letter);
         nodeArr.push(tempObj);
 
-        // // add nodes to canvas
-        tempObj.draw("white");
+        // add nodes to canvas
+        // tempObj.draw("white");
+        let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        let rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', y);
+        rect.setAttribute('height', height);
+        rect.setAttribute('width', width);
+        rect.setAttribute('fill', "white");
+        rect.setAttribute('id', letter);
+
+        text.setAttribute('x', x+(width/2));
+        text.setAttribute('y', y+(height/2));
+        text.setAttribute('fill', "black");
+        text.innerHTML = letter;
+
+        group.appendChild(rect);
+        group.appendChild(text);
+        let svg = document.getElementById("screensvg");
+        svg.appendChild(group);
 
         // move x values to right and y values down
         if((i+1) % offsetVal == 0){
@@ -200,68 +222,16 @@ function inputCheck(numItems){
 }
 
 // adds the visual part of connections
-function addVisualConnections(){
-    let width = canvas.width*.1
-    let height = canvas.height*.1;
-    let context = canvas.getContext("2d");
-
-    // add connections to nodes
-    for(let i = 0; i < connectionsArr.length; i++){
-        // draw line between nodes
-        drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "blue", connectionsArr[i].weight);
-    }
-}
-
-// function to draw line between nodes with an arrow at end and weight of connection
-// TODO: make arrows look better
 // TODO: make colors not overlap when redrawing
 // TODO: make arrow for if start node is same as end node
-function drawArrow(context, startNode, endNode, color, weight){
-        let startX = 0, startY = 0, endX = 0, endY = 0;
-        let width = canvas.width*.1
-        let height = canvas.height*.1;
-        
-        // change where connection starts/ends 
-        // based on where nodes are in realtion to eachother
-        if(startNode.x > endNode.x){ // start is further right than end
-            startX = startNode.x;
-            endX = endNode.x + width;
-        }else if(startNode.x < endNode.x){ // start is further left than end
-            startX = startNode.x + width;
-            endX = endNode.x;
-        }else{ // start and end are in same column
-            startX = startNode.x + width/2;
-            endX = endNode.x + width/2;
-        }
-        if(startNode.y > endNode.y){ // start is below the end
-            startY = startNode.y;
-            endY = endNode.y + height;
-        }else if(startNode.y < endNode.y){ // start is above  the end
-            startY = startNode.y + height;
-            endY = endNode.y;
-        }else{ // start and end are in same row
-            startY = startNode.y + height/2;
-            endY = endNode.y + height/2;
-        }
-
-    let headLen = 10;
-    let dx = endX - startX;
-    let dy = endY - startY;
-    let angle = Math.atan2(dy, dx);
-    context.beginPath();
-    context.lineWidth = 5;
-    context.strokeStyle = color;
-    context.moveTo(startX, startY);
-    context.lineTo(endX, endY);
-    context.lineTo(endX - headLen * Math.cos(angle-Math.PI/6), endY - headLen * Math.sin(angle-Math.PI/6));
-    context.moveTo(endX, endY);
-    context.lineTo(endX - headLen * Math.cos(angle+Math.PI/6), endY - headLen * Math.sin(angle+Math.PI/6));
-    context.stroke();
-    
-    // draw weight next to line
-    context.font = "50px serif";
-    context.fillStyle = "orange";
-    context.fillText(weight, (startX+endX)/2, (startY+endY)/2);
+// TODO: change color of connections during algorithm
+function addVisualConnections(){
+    // add connections to nodes using Leader Line
+    for(let i = 0; i < connectionsArr.length; i++){
+        new LeaderLine(document.getElementById(connectionsArr[i].start.letter),
+        document.getElementById(connectionsArr[i].end.letter),
+        {color: 'blue', middleLabel: LeaderLine.pathLabel({text: (connectionsArr[i].weight).toString(), outlineColor: 'black', color: 'orange'})});
+    }
 }
 
 // change value in a table
@@ -278,17 +248,6 @@ function getTableValue(rowNum){
     let row = table.getElementsByTagName("tr")[rowNum];
     let td = row.getElementsByTagName("td")[1];
     return td.innerText;
-}
-
-// draws a node on the canvas
-function drawNode(node, width, height, color){
-    let context = canvas.getContext("2d");
-
-    context.fillStyle = color;
-    context.fillRect(node.x, node.y, width, height);
-    context.font = "50px serif";
-    context.fillStyle = "black";
-    context.fillText(node.letter, node.x+(width/2), node.y+(height/2));
 }
 
 // sorting algorithm for dijkstras
@@ -312,11 +271,11 @@ function insertionSort(arr, n){
 // adds the first node in array's connections to the array
 // either updating their distance or adding a new element
 async function addToArray(src, arr){
-    let context = canvas.getContext("2d");
+    // let context = canvas.getContext("2d");
     // find connections where src is start
     for(let i = 0; i < connectionsArr.length; i++){
         if(connectionsArr[i].start == src){
-            drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "red", connectionsArr[i].weight);
+            // drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "red", connectionsArr[i].weight);
             await new Promise((resolve) =>
                 setTimeout(() => {
                     resolve();
@@ -349,12 +308,12 @@ async function addToArray(src, arr){
                     }
                 }
             }
-            drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "blue", connectionsArr[i].weight);
+            // drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "blue", connectionsArr[i].weight);
         }
     }
     // remove first item which is now fully processed
     // TODO: make this not override connctions going through node
-    arr[0].draw("white");
+    // arr[0].draw("white");
     arr.shift();
     // sort array
     if(arr.length != 0){}
@@ -395,7 +354,7 @@ async function dijkstras(){
             }, delay*1.5)
         );
         
-        arr[0].draw("red");
+        // arr[0].draw("red");
         await addToArray(arr[0], arr);
     }
     // reset node array table
