@@ -17,10 +17,22 @@ class node{
     constructor(x, y, letter){
         this.x = x;
         this.y = y;
+        this.width = canvas.width*.1;
+        this.height = canvas.height*.1;
         this.letter = letter;
         this.distFromSrc = 10000;
     }
+
+    draw(color){
+        let context = canvas.getContext("2d");
+        context.fillStyle = color;
+        context.fillRect(this.x, this.y, this.width, this.height);
+        context.font = "50px serif";
+        context.fillStyle = "black";
+        context.fillText(this.letter, this.x+(this.width/2), this.y+(this.height/2));
+    }
 }
+
 
 // gets the value of the speed slider
 document.getElementById("speedSlider").oninput = function(){
@@ -127,7 +139,7 @@ function generateArray(numItems){
         nodeArr.push(tempObj);
 
         // // add nodes to canvas
-        drawNode(tempObj, width, height, "white");
+        tempObj.draw("white");
 
         // move x values to right and y values down
         if((i+1) % offsetVal == 0){
@@ -342,7 +354,7 @@ async function addToArray(src, arr){
     }
     // remove first item which is now fully processed
     // TODO: make this not override connctions going through node
-    drawNode(arr[0], canvas.width*.1, canvas.height*.1, "white");
+    arr[0].draw("white");
     arr.shift();
     // sort array
     if(arr.length != 0){}
@@ -383,7 +395,7 @@ async function dijkstras(){
             }, delay*1.5)
         );
         
-        drawNode(arr[0], canvas.width*.1, canvas.height*.1, "red");
+        arr[0].draw("red");
         await addToArray(arr[0], arr);
     }
     // reset node array table
