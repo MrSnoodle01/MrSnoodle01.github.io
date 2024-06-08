@@ -41,7 +41,24 @@ document.getElementById('home-button').addEventListener('click', () =>{
     location.href = "../";
 })
 
-// when user clicks submit button begin the sorting process
+// add nodes to screen before running algorithm
+document.getElementById('num-items').oninput = function(){
+    let numItems = document.getElementById('num-items').value;
+
+    if(numItems > 26 || numItems < 1 && isNaN(numItems)){
+        alert("Please enter a number greater than 0 and less than 27");
+        return;
+    }
+
+    // clear old nodes
+    document.getElementById("screensvg").innerHTML = "";
+    document.getElementById("distTable").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>";
+    nodeArr = [];
+
+    generateArray(numItems);
+}
+
+// when user clicks submit button 
 document.getElementById('submit').addEventListener('click', () =>{
     let numItems = document.getElementById("num-items").value;
 
@@ -57,15 +74,9 @@ document.getElementById('submit').addEventListener('click', () =>{
     delay = (delay - 250) * (-1);
 
     // clear old nodes
-    // const context = canvas.getContext('2d');
-    // context.clearRect(0, 0, canvas.width, canvas.height);
     document.querySelectorAll('.leader-line').forEach(e => e.remove());
-    document.getElementById("screensvg").innerHTML = "";
-    document.getElementById("distTable").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>";
     connectionsArr = [];
-    nodeArr = [];
 
-    generateArray(numItems);
     addConnections();
     if(!inputCheck(numItems))
         return;
@@ -77,6 +88,11 @@ document.getElementById('submit').addEventListener('click', () =>{
     // get which algorithm is chosen by user
     let el = document.getElementById('options');
     algoPick(el);
+
+    // clear table for use without any settings changes
+    for(let i = 0; i < numItems; i++){
+        tableChange((nodeArr[i].letter).charCodeAt(0) - 64, "INF", "distTable", 1)
+    }
 })
 
 // picks algorithm from user
@@ -117,7 +133,6 @@ function addConnections(){
 
 //generate array of nodes and connects them
 function generateArray(numItems){
-    // const context = canvas.getContext("2d");
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     // get square root of closest even square root of numItems to make nice square with nodes
     let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems)),2));
@@ -138,6 +153,7 @@ function generateArray(numItems){
         // add nodes to canvas
         let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
         group.setAttribute('class', "draggable");
+        group.setAttribute('id', `group${letter}`);
         let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         let rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
         rect.setAttribute('x', x);
@@ -223,8 +239,8 @@ function inputCheck(numItems){
 function addVisualConnections(){
     // add connections to nodes using Leader Line
     for(let i = 0; i < connectionsArr.length; i++){
-        connectionsArr[i].line = new LeaderLine(document.getElementById(connectionsArr[i].start.letter),
-        document.getElementById(connectionsArr[i].end.letter),
+        connectionsArr[i].line = new LeaderLine(document.getElementById(`group${connectionsArr[i].start.letter}`),
+        document.getElementById(`group${connectionsArr[i].end.letter}`),
         {color: 'blue', middleLabel: LeaderLine.pathLabel({text: (connectionsArr[i].weight).toString(), outlineColor: 'black', color: 'orange'})});
     }
 }
@@ -245,7 +261,7 @@ function getTableValue(rowNum){
     return td.innerText;
 }
 
-// TODO: make arrows follow moving nodes
+// TODO: error when changing numItems and then trying to move nodes
 // function for dragging and dropping elements
 function makeDraggable(evt){
     var svg = evt.target;
@@ -259,7 +275,7 @@ function makeDraggable(evt){
     svg.addEventListener('touchend', endDrag);
     svg.addEventListener('touchleave', endDrag);
     svg.addEventListener('touchcancel', endDrag);
-    var selectedElement = null, offset;
+    var selectedElement = null, offset, line = [];
 
     function getMousePosition(evt){
         var CTM = svg.getScreenCTM();
@@ -287,6 +303,13 @@ function makeDraggable(evt){
             transform = transforms.getItem(0);
             offset.x -= transform.matrix.e;
             offset.y -= transform.matrix.f;
+
+            // get connections so they can update
+            for(let i = 0; i < connectionsArr.length; i++){
+                if(connectionsArr[i].start.letter == evt.target.id || connectionsArr[i].end.letter == evt.target.id){
+                    line.push(connectionsArr[i].line);
+                }
+            }
         }
     }
 
@@ -295,6 +318,9 @@ function makeDraggable(evt){
             evt.preventDefault();
             var coord = getMousePosition(evt);
             transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
+            for(let i = 0; i < line.length; i++){
+                line[i].position();
+            }
         }
     }
 
