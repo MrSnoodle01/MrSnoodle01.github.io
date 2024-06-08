@@ -36,6 +36,10 @@ table,th,td{
     color:white;
 }
 
+.draggable{
+    cursor: move;
+}
+
 #home-button{
     position: absolute;
     left: 0px;

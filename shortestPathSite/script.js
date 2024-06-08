@@ -2,7 +2,6 @@ const MAX = 20;
 var delay = 0;
 var nodeArr = [];
 var connectionsArr = [];
-// const canvas = document.getElementById("canvas");
 var container = document.getElementById("screen");
 
 // connection class to connect nodes
@@ -11,6 +10,11 @@ class connection{
         this.start = start;
         this.weight = weight;
         this.end = end;
+        this.line = null;
+    }
+
+    changeLineColor(color){
+        this.line.color = color;
     }
 }
 
@@ -23,16 +27,6 @@ class node{
         this.letter = letter;
         this.distFromSrc = 10000;
     }
-
-    // TODO: change colors of nodes during algorithm
-    // draw(color){
-    //     let context = canvas.getContext("2d");
-    //     context.fillStyle = color;
-    //     context.fillRect(this.x, this.y, this.width, this.height);
-    //     context.font = "50px serif";
-    //     context.fillStyle = "black";
-    //     context.fillText(this.letter, this.x+(this.width/2), this.y+(this.height/2));
-    // }
 }
 
 // gets the value of the speed slider
@@ -65,6 +59,7 @@ document.getElementById('submit').addEventListener('click', () =>{
     // clear old nodes
     // const context = canvas.getContext('2d');
     // context.clearRect(0, 0, canvas.width, canvas.height);
+    document.querySelectorAll('.leader-line').forEach(e => e.remove());
     document.getElementById("screensvg").innerHTML = "";
     document.getElementById("distTable").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>";
     connectionsArr = [];
@@ -75,7 +70,6 @@ document.getElementById('submit').addEventListener('click', () =>{
     if(!inputCheck(numItems))
         return;
     addVisualConnections();
-    
 
     // disables button so that graphs cant overlap
     document.getElementById('submit').disabled = true;
@@ -142,8 +136,8 @@ function generateArray(numItems){
         nodeArr.push(tempObj);
 
         // add nodes to canvas
-        // tempObj.draw("white");
         let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        group.setAttribute('class', "draggable");
         let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         let rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
         rect.setAttribute('x', x);
@@ -152,10 +146,13 @@ function generateArray(numItems){
         rect.setAttribute('width', width);
         rect.setAttribute('fill', "white");
         rect.setAttribute('id', letter);
+        rect.setAttribute('rx', "15");
+        rect.setAttribute('class', "draggable");
 
         text.setAttribute('x', x+(width/2));
         text.setAttribute('y', y+(height/2));
         text.setAttribute('fill', "black");
+        text.setAttribute('class', "draggable");
         text.innerHTML = letter;
 
         group.appendChild(rect);
@@ -222,13 +219,11 @@ function inputCheck(numItems){
 }
 
 // adds the visual part of connections
-// TODO: make colors not overlap when redrawing
 // TODO: make arrow for if start node is same as end node
-// TODO: change color of connections during algorithm
 function addVisualConnections(){
     // add connections to nodes using Leader Line
     for(let i = 0; i < connectionsArr.length; i++){
-        new LeaderLine(document.getElementById(connectionsArr[i].start.letter),
+        connectionsArr[i].line = new LeaderLine(document.getElementById(connectionsArr[i].start.letter),
         document.getElementById(connectionsArr[i].end.letter),
         {color: 'blue', middleLabel: LeaderLine.pathLabel({text: (connectionsArr[i].weight).toString(), outlineColor: 'black', color: 'orange'})});
     }
@@ -248,6 +243,64 @@ function getTableValue(rowNum){
     let row = table.getElementsByTagName("tr")[rowNum];
     let td = row.getElementsByTagName("td")[1];
     return td.innerText;
+}
+
+// TODO: make arrows follow moving nodes
+// function for dragging and dropping elements
+function makeDraggable(evt){
+    var svg = evt.target;
+    svg.addEventListener('mousedown', startDrag);
+    svg.addEventListener('mousemove', drag);
+    svg.addEventListener('mouseup', endDrag);
+    svg.addEventListener('mouseleave', endDrag);
+    // for mobile
+    svg.addEventListener('touchstart', startDrag);
+    svg.addEventListener('touchmove', drag);
+    svg.addEventListener('touchend', endDrag);
+    svg.addEventListener('touchleave', endDrag);
+    svg.addEventListener('touchcancel', endDrag);
+    var selectedElement = null, offset;
+
+    function getMousePosition(evt){
+        var CTM = svg.getScreenCTM();
+        if(evt.touches) { evt = evt.touches[0]; }
+        return{
+            x: (evt.clientX - CTM.e) / CTM.a,
+            y: (evt.clientY - CTM.f) / CTM.d
+        };
+    }
+
+    function startDrag(evt){
+        if(evt.target.classList.contains('draggable')){
+            selectedElement = evt.target.parentNode;
+            offset = getMousePosition(evt);
+
+            var transforms = selectedElement.transform.baseVal;
+
+            if(transforms.length == 0 || transforms.getItem(0).type != SVGTransform.SVG_TRANSFORM_TRANSLATE){
+                var translate = svg.createSVGTransform();
+                translate.setTranslate(0,0);
+
+                selectedElement.transform.baseVal.insertItemBefore(translate, 0);
+            }
+
+            transform = transforms.getItem(0);
+            offset.x -= transform.matrix.e;
+            offset.y -= transform.matrix.f;
+        }
+    }
+
+    function drag(evt){
+        if(selectedElement){
+            evt.preventDefault();
+            var coord = getMousePosition(evt);
+            transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
+        }
+    }
+
+    function endDrag(evt){
+        selectedElement = null;
+    }
 }
 
 // sorting algorithm for dijkstras
@@ -271,11 +324,10 @@ function insertionSort(arr, n){
 // adds the first node in array's connections to the array
 // either updating their distance or adding a new element
 async function addToArray(src, arr){
-    // let context = canvas.getContext("2d");
     // find connections where src is start
     for(let i = 0; i < connectionsArr.length; i++){
         if(connectionsArr[i].start == src){
-            // drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "red", connectionsArr[i].weight);
+            connectionsArr[i].changeLineColor("red");
             await new Promise((resolve) =>
                 setTimeout(() => {
                     resolve();
@@ -308,12 +360,11 @@ async function addToArray(src, arr){
                     }
                 }
             }
-            // drawArrow(context, connectionsArr[i].start, connectionsArr[i].end, "blue", connectionsArr[i].weight);
+            connectionsArr[i].changeLineColor("blue");
         }
     }
     // remove first item which is now fully processed
-    // TODO: make this not override connctions going through node
-    // arr[0].draw("white");
+    document.getElementById(arr[0].letter).style.fill = "white";
     arr.shift();
     // sort array
     if(arr.length != 0){}
@@ -354,11 +405,9 @@ async function dijkstras(){
             }, delay*1.5)
         );
         
-        // arr[0].draw("red");
+        document.getElementById(arr[0].letter).style.fill = "red";
         await addToArray(arr[0], arr);
     }
     // reset node array table
     document.getElementById("stackTable").innerHTML = "<caption style='color:#8fdee6'>Current node array</caption><tr style='color:#8fdee6'><td>Node</td></tr><tr style='color:#8fdee6'><td>Dist</td></tr>";
 }
-
-// TODO: add drag and drop ability
