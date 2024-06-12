@@ -84,13 +84,14 @@ document.getElementById('submit').addEventListener('click', () =>{
 
     // disables button so that graphs cant overlap
     document.getElementById('submit').disabled = true;
+    document.getElementById('num-items').disabled = true;
 
     // get which algorithm is chosen by user
     let el = document.getElementById('options');
     algoPick(el);
 
     // clear table for use without any settings changes
-    for(let i = 0; i < numItems; i++){
+    for(let i = 1; i < numItems; i++){
         tableChange((nodeArr[i].letter).charCodeAt(0) - 64, "INF", "distTable", 1)
     }
 })
@@ -107,6 +108,7 @@ async function algoPick(el){
             break;
     }
     document.getElementById('submit').disabled = false;
+    document.getElementById('num-items').disabled = false;
 }
 
 // turn user input into an array of connections
@@ -136,8 +138,7 @@ function generateArray(numItems){
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     // get square root of closest even square root of numItems to make nice square with nodes
     let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems)),2));
-    let offsetX = 0;
-    let offsetY = 0;
+    let offsetX = 0, offsetY = 0;
     let backgroundHeight = document.getElementById('screen').clientHeight;
     let backgroundWidth = document.getElementById('screen').clientWidth;
     let width = Math.floor(backgroundHeight*.15);
@@ -150,31 +151,8 @@ function generateArray(numItems){
         let tempObj = new node(x, y, width, height, letter);
         nodeArr.push(tempObj);
 
-        // add nodes to canvas
-        let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        group.setAttribute('class', "draggable");
-        group.setAttribute('id', `group${letter}`);
-        let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        let rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
-        rect.setAttribute('x', x);
-        rect.setAttribute('y', y);
-        rect.setAttribute('height', height);
-        rect.setAttribute('width', width);
-        rect.setAttribute('fill', "white");
-        rect.setAttribute('id', letter);
-        rect.setAttribute('rx', "15");
-        rect.setAttribute('class', "draggable");
-
-        text.setAttribute('x', x+(width/2));
-        text.setAttribute('y', y+(height/2));
-        text.setAttribute('fill', "black");
-        text.setAttribute('class', "draggable");
-        text.innerHTML = letter;
-
-        group.appendChild(rect);
-        group.appendChild(text);
-        let svg = document.getElementById("screensvg");
-        svg.appendChild(group);
+        // add visual part of node to screen
+        addNodeToScreen(x, y, width, height, letter);
 
         // move x values to right and y values down
         if((i+1) % offsetVal == 0){
@@ -196,6 +174,41 @@ function generateArray(numItems){
         </td>`;
         table.appendChild(row);
     }
+}
+
+// function to add visual part of node to screen
+function addNodeToScreen(x, y, width, height, letter){
+    // creates group to hold both the rectangle and letter
+    let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    group.setAttribute('class', "draggable");
+    group.setAttribute('id', `group${letter}`);
+    
+    // creates rectangle
+    let rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('height', height);
+    rect.setAttribute('width', width);
+    rect.setAttribute('fill', "white");
+    rect.setAttribute('id', letter);
+    rect.setAttribute('rx', "15");
+    rect.setAttribute('class', "draggable");
+
+    // creates letter text
+    let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute('x', x+(width/2));
+    text.setAttribute('y', y+(height/2));
+    text.setAttribute('fill', "black");
+    text.setAttribute('class', "draggable");
+    text.innerHTML = letter;
+
+    // adds rectangle and letter text to group
+    group.appendChild(rect);
+    group.appendChild(text);
+    
+    // adds group to svg screen
+    let svg = document.getElementById("screensvg");
+    svg.appendChild(group);
 }
 
 // checks user input for errors
