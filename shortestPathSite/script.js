@@ -1,5 +1,6 @@
 const MAX = 20;
 var delay = 0;
+var offsetX = 0, offsetY = 0;
 var nodeArr = [];
 var connectionsArr = [];
 var container = document.getElementById("screen");
@@ -50,12 +51,31 @@ document.getElementById('num-items').oninput = function(){
         return;
     }
 
-    // clear old nodes
-    document.getElementById("screensvg").innerHTML = "";
-    document.getElementById("distTable").innerHTML = "<tr style='color:#8fdee6'><th>node</th><th>distance from start</th></tr>";
-    nodeArr = [];
-
-    generateArray(numItems);
+    // TODO: rescale when removing nodes
+    // if number is incresed
+    if(numItems > nodeArr.length){
+        // add new nodes
+        for(let i = nodeArr.length; i < numItems; i++){
+            let prevOffsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(nodeArr.length-1)),2));;
+            addNodeToArray(nodeArr.length+1, i, prevOffsetVal);
+        }
+    }else if(numItems < nodeArr.length){
+        // remove each element
+        for(let i = nodeArr.length; i > numItems; i--){
+            console.log("here");
+            // remove last node
+            let popped = nodeArr.pop(); 
+            // remove lines cooresponding with that node
+            for(let j = 0; j < connectionsArr.length; j++){
+                if(connectionsArr[j].end.letter == popped.letter){
+                    (connectionsArr[j].line).remove();
+                }
+            }
+            // remove visual part of node
+            let element = document.getElementById(`group${popped.letter}`);
+            element.remove();
+        }
+    }
 }
 
 // when user clicks submit button 
@@ -64,7 +84,7 @@ document.getElementById('submit').addEventListener('click', () =>{
 
     // make sure user's number is at more than 0 and less than 27
     if(numItems > 26 || numItems < 1){
-        alert("please enter a number greater than 0 and less than 27");
+        alert("please enter a number greater than 1 and less than 27");
         return;
     }
 
@@ -95,6 +115,11 @@ document.getElementById('submit').addEventListener('click', () =>{
         tableChange((nodeArr[i].letter).charCodeAt(0) - 64, "INF", "distTable", 1)
     }
 })
+
+// function to load 2 nodes when website is first loaded
+function startFunction(){
+    generateArray(2);
+}
 
 // picks algorithm from user
 // important to use await so button stays disabled
@@ -135,45 +160,74 @@ function addConnections(){
 
 //generate array of nodes and connects them
 function generateArray(numItems){
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     // get square root of closest even square root of numItems to make nice square with nodes
     let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems)),2));
-    let offsetX = 0, offsetY = 0;
+    let prevOffsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems-1)),2));
+    offsetX = 0, offsetY = 0;
+    for(let i = 0; i < numItems; i++){
+        addNodeToArray(offsetVal, i, prevOffsetVal)
+    }
+}
+
+// creates a new node and adds it to array
+function addNodeToArray(numItems, itemIndex, prevOffsetVal){
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // get square root of closest even square root of numItems 
+    let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems)),2));
+
     let backgroundHeight = document.getElementById('screen').clientHeight;
     let backgroundWidth = document.getElementById('screen').clientWidth;
     let width = Math.floor(backgroundHeight*.15);
     let height = Math.floor(backgroundWidth*.1);
 
-    for(let i = 0; i < numItems; i++){
-        let x = parseInt(backgroundWidth*offsetY);
-        let y = parseInt(backgroundHeight*offsetX);
-        let letter = characters.charAt(i);
-        let tempObj = new node(x, y, width, height, letter);
-        nodeArr.push(tempObj);
-
-        // add visual part of node to screen
-        addNodeToScreen(x, y, width, height, letter);
-
-        // move x values to right and y values down
-        if((i+1) % offsetVal == 0){
-            offsetY += 1/(offsetVal - .5);
-            offsetX = 0;
-        }else{
-            offsetX += 1/(offsetVal - .5);
+    // need to change all nodes coords since offsetVal(scaling) just changed
+    if(offsetVal != prevOffsetVal){
+        offsetX = 0;
+        offsetY = 0;
+        // clear screen of old nodes
+        document.getElementById("screensvg").innerHTML = "";
+        for(let i = 0; i < nodeArr.length; i++){
+            nodeArr[i].x = parseInt(backgroundWidth*offsetY);
+            nodeArr[i].y = parseInt(backgroundHeight*offsetX);
+            addNodeToScreen(nodeArr[i].x, nodeArr[i].y, width, height, nodeArr[i].letter);
+            // move x values to right and y values down
+            if((i+1) % offsetVal == 0){
+                offsetY += 1/(offsetVal - .5);
+                offsetX = 0;
+            }else{
+                offsetX += 1/(offsetVal - .5);
+            }
         }
-
-        // add node to table
-        const table = document.getElementById('distTable');
-        const row = document.createElement('tr');
-        row.innerHTML = `
-        <td style="color:#8fdee6">
-        ${letter}
-        </td>
-        <td style="color:#8fdee6">
-        INF
-        </td>`;
-        table.appendChild(row);
     }
+
+    let x = parseInt(backgroundWidth*offsetY);
+    let y = parseInt(backgroundHeight*offsetX);
+    let letter = characters.charAt(itemIndex);
+    let tempObj = new node(x, y, width, height, letter);
+    nodeArr.push(tempObj);
+
+    // add visual part of node to screen
+    addNodeToScreen(x, y, width, height, letter);
+
+    // move x values to right and y values down
+    if((itemIndex+1) % offsetVal == 0){
+        offsetY += 1/(offsetVal - .5);
+        offsetX = 0;
+    }else{
+        offsetX += 1/(offsetVal - .5);
+    }
+
+    // add node to table
+    const table = document.getElementById('distTable');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+    <td style="color:#8fdee6">
+    ${letter}
+    </td>
+    <td style="color:#8fdee6">
+    INF
+    </td>`;
+    table.appendChild(row);
 }
 
 // function to add visual part of node to screen
@@ -252,9 +306,13 @@ function inputCheck(numItems){
 function addVisualConnections(){
     // add connections to nodes using Leader Line
     for(let i = 0; i < connectionsArr.length; i++){
-        connectionsArr[i].line = new LeaderLine(document.getElementById(`group${connectionsArr[i].start.letter}`),
+        connectionsArr[i].line = new LeaderLine(
+        document.getElementById(`group${connectionsArr[i].start.letter}`),
         document.getElementById(`group${connectionsArr[i].end.letter}`),
-        {color: 'blue', middleLabel: LeaderLine.pathLabel({text: (connectionsArr[i].weight).toString(), outlineColor: 'black', color: 'orange'})});
+        {color: 'blue', 
+        middleLabel: LeaderLine.pathLabel({text: (connectionsArr[i].weight).toString(), 
+        outlineColor: 'black', 
+        color: 'orange'})});
     }
 }
 
