@@ -44,36 +44,51 @@ document.getElementById('home-button').addEventListener('click', () =>{
 
 // add nodes to screen before running algorithm
 document.getElementById('num-items').oninput = function(){
-    let numItems = document.getElementById('num-items').value;
+    let numItems = Number(document.getElementById('num-items').value);
 
     if(numItems > 26 || numItems < 1 && isNaN(numItems)){
         alert("Please enter a number greater than 0 and less than 27");
         return;
     }
 
-    // TODO: rescale when removing nodes
     // if number is incresed
     if(numItems > nodeArr.length){
         // add new nodes
         for(let i = nodeArr.length; i < numItems; i++){
-            let prevOffsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(nodeArr.length-1)),2));;
+            let prevOffsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(nodeArr.length)),2));
             addNodeToArray(nodeArr.length+1, i, prevOffsetVal);
         }
     }else if(numItems < nodeArr.length){
         // remove each element
         for(let i = nodeArr.length; i > numItems; i--){
-            console.log("here");
             // remove last node
             let popped = nodeArr.pop(); 
             // remove lines cooresponding with that node
             for(let j = 0; j < connectionsArr.length; j++){
-                if(connectionsArr[j].end.letter == popped.letter){
-                    (connectionsArr[j].line).remove();
-                }
+                if(connectionsArr[j].end.letter == popped.letter)
+                    if(connectionsArr[j].line != null && connectionsArr[j].line != undefined)
+                        (connectionsArr[j].line).remove();
             }
+            
             // remove visual part of node
             let element = document.getElementById(`group${popped.letter}`);
             element.remove();
+
+            // remove node from table
+            document.getElementById('distTable').deleteRow(numItems+1);
+
+            // rescale when removing nodes
+            let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(nodeArr.length)),2));
+            let prevOffsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(nodeArr.length+1)),2));
+            if(offsetVal != prevOffsetVal){
+                nodeArr = [];
+                for(let j = 0; j < numItems; j++){
+                    document.getElementById('distTable').deleteRow(1);
+                }
+                for(let j = 0; j < numItems; j++){
+                    addNodeToArray(numItems, j, prevOffsetVal);
+                }
+            }
         }
     }
 }
@@ -198,6 +213,8 @@ function addNodeToArray(numItems, itemIndex, prevOffsetVal){
                 offsetX += 1/(offsetVal - .5);
             }
         }
+        // redo connections
+        document.querySelectorAll('.leader-line').forEach(e => e.remove());
     }
 
     let x = parseInt(backgroundWidth*offsetY);
