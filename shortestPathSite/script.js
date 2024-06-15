@@ -61,6 +61,7 @@ document.getElementById('num-items').oninput = function(){
     }else if(numItems < nodeArr.length){
         // remove each element
         for(let i = nodeArr.length; i > numItems; i--){
+            
             // remove last node
             let popped = nodeArr.pop(); 
             // remove lines cooresponding with that node
@@ -87,6 +88,14 @@ document.getElementById('num-items').oninput = function(){
                 }
                 for(let j = 0; j < numItems; j++){
                     addNodeToArray(numItems, j, prevOffsetVal);
+                }
+            }else{ // change offsets
+                if((numItems+1) % offsetVal == 0){
+                    offsetY -= 1/(offsetVal - .5);
+                    // if node is last in col and offsetX has been set to zero
+                    offsetX += (1/(offsetVal - .5)*(offsetVal-1));
+                }else if(offsetX > 0){
+                    offsetX -= 1/(offsetVal - .5);
                 }
             }
         }
@@ -178,7 +187,8 @@ function generateArray(numItems){
     // get square root of closest even square root of numItems to make nice square with nodes
     let offsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems)),2));
     let prevOffsetVal = Math.sqrt(Math.pow(Math.ceil(Math.sqrt(numItems-1)),2));
-    offsetX = 0, offsetY = 0;
+    offsetX = 0;
+    offsetY = 0;
     for(let i = 0; i < numItems; i++){
         addNodeToArray(offsetVal, i, prevOffsetVal)
     }
