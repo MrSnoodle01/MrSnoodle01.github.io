@@ -66,9 +66,15 @@ document.getElementById('num-items').oninput = function(){
             let popped = nodeArr.pop(); 
             // remove lines cooresponding with that node
             for(let j = 0; j < connectionsArr.length; j++){
-                if(connectionsArr[j].end.letter == popped.letter)
-                    if(connectionsArr[j].line != null && connectionsArr[j].line != undefined)
+                if(connectionsArr[j].end.letter == popped.letter || connectionsArr[j].start.letter == popped.letter){
+                    if(connectionsArr[j].line != null && connectionsArr[j].line != undefined){
                         (connectionsArr[j].line).remove();
+                        // connectionsArr[j].line = null;
+                        connectionsArr.splice(j, 1);
+                        j--;
+                        // console.log(connectionsArr);
+                    }
+                }
             }
             
             // remove visual part of node
@@ -359,7 +365,6 @@ function getTableValue(rowNum){
     return td.innerText;
 }
 
-// TODO: error when changing numItems and then trying to move nodes
 // function for dragging and dropping elements
 function makeDraggable(evt){
     var svg = evt.target;
@@ -402,10 +407,13 @@ function makeDraggable(evt){
             offset.x -= transform.matrix.e;
             offset.y -= transform.matrix.f;
 
+            line = [];
             // get connections so they can update
             for(let i = 0; i < connectionsArr.length; i++){
                 if(connectionsArr[i].start.letter == evt.target.id || connectionsArr[i].end.letter == evt.target.id){
+                    // console.log("before");
                     line.push(connectionsArr[i].line);
+                    // console.log("after");
                 }
             }
         }
