@@ -134,6 +134,13 @@ document.getElementById('submit').addEventListener('click', () =>{
     document.getElementById('submit').disabled = true;
     document.getElementById('num-items').disabled = true;
 
+    // remove stack table
+    document.getElementById("stackTable").setAttribute("hidden", "hidden");
+
+    // remove text saying there is a negative cycle
+    if(document.getElementById("negText") != null)
+        document.getElementById("negText").remove();
+
     // get which algorithm is chosen by user
     let el = document.getElementById('options');
     algoPick(el);
@@ -141,11 +148,13 @@ document.getElementById('submit').addEventListener('click', () =>{
     // clear table for use without any settings changes
     for(let i = 1; i < numItems; i++){
         tableChange((nodeArr[i].letter).charCodeAt(0) - 64, "INF", "distTable", 1)
+        nodeArr[i].distFromSrc = 10000;
     }
 })
 
 // function to load 2 nodes when website is first loaded
 function startFunction(){
+    document.getElementById("stackTable").setAttribute("hidden", "hidden");
     generateArray(2);
 }
 
@@ -155,13 +164,64 @@ async function algoPick(el){
     switch(el.options[el.selectedIndex].innerHTML){
         case "Dijkstra's Algorithm":
             console.log("dijkstra's algorithm");
+            document.getElementById("stackTable").removeAttribute("hidden");
             await dijkstras();
+            break;
+        case "Bellman-Ford Algorithm":
+            console.log("bellman-ford algorithm");
+            await bellmanFord();
             break;
         default:
             break;
     }
     document.getElementById('submit').disabled = false;
     document.getElementById('num-items').disabled = false;
+}
+
+// checks user input for errors
+function inputCheck(numItems){
+    let input = document.getElementById('customText').value;
+    let inputArr = input.split(/\n|,/);
+    for(let i = 0; i < inputArr.length; i+=3){
+        if(!/[A-Z]/.test(inputArr[i])){
+            alert("Please only enter start nodes from A-Z");
+            return false;
+        }
+        if(inputArr[i].length > 1){
+            alert("Please only enter single letter start nodes");
+            return false;
+        }
+        if(!/[0-9]/.test(Number(inputArr[i+1]))){
+            alert("Please only enter numbers for the weight");
+            return false;
+        }
+        if(Number(inputArr[i+1]) > 20 || Number(inputArr[i+1]) < -20){
+            alert("Please enter a weight less than 20 and greater than -20");
+            return false;
+        }
+        if(!/[A-Z]/.test(inputArr[i+2])){
+            alert("Please only enter end nodes from A-Z");
+            return false;
+        }
+        if(inputArr[i+2].length > 1){
+            alert("Please only enter single letter end nodes");
+            return false;
+        }
+        if(inputArr[i].charCodeAt(0)-64 > numItems || inputArr[i+2].charCodeAt(0)-64 > numItems){
+            alert("Please only enter node letters that will be visible on the graph");
+            return false;
+        }
+        let el = document.getElementById('options')
+        if(Number(inputArr[i+1]) < 0 && el.options[el.selectedIndex].innerHTML == "Dijkstra's Algorithm"){
+            alert("Dijkstra's algorithm can't handle negative weights. Please try again");
+            return false;
+        }
+        if(inputArr[i] == inputArr[i+2]){
+            alert("Please don't have the start node the the same as the end node");
+            return false;
+        }
+    }
+    return true;
 }
 
 // turn user input into an array of connections
@@ -184,6 +244,22 @@ function addConnections(){
         let tempObj = new connection(tempStart, Number(inputArr[i+1]), tempEnd);
         connectionsArr.push(tempObj);
     }
+
+    // sort connections
+    for (let i = 1; i < connectionsArr.length; i++){  
+        let key = connectionsArr[i];  
+        let j = i - 1;  
+  
+        /* Move elements of arr[0..i-1], that are  
+        greater than key, to one position ahead  
+        of their current position */
+        while (j >= 0 && connectionsArr[j].start.letter > key.start.letter){  
+            // arr[j + 1] = arr[j];  
+            connectionsArr[j+1] = connectionsArr[j];
+            j = j - 1;  
+        }  
+        connectionsArr[j + 1] = key;  
+    }  
 }
 
 //generate array of nodes and connects them
@@ -294,42 +370,6 @@ function addNodeToScreen(x, y, width, height, letter){
     // adds group to svg screen
     let svg = document.getElementById("screensvg");
     svg.appendChild(group);
-}
-
-// checks user input for errors
-function inputCheck(numItems){
-    let input = document.getElementById('customText').value;
-    let inputArr = input.split(/\n|,/);
-    for(let i = 0; i < inputArr.length; i+=3){
-        if(!/[A-Z]/.test(inputArr[i])){
-            alert("Please only enter start nodes from A-Z");
-            return false;
-        }
-        if(inputArr[i].length > 1){
-            alert("Please only enter single letter start nodes");
-            return false;
-        }
-        if(!/[0-9]/.test(Number(inputArr[i+1]))){
-            alert("Please only enter numbers for the weight");
-            return false;
-        }
-        if(Number(inputArr[i+1]) > 20 || Number(inputArr[i+1]) < 0){
-            alert("Please enter a weight less than 20 and greater than -1");
-        }
-        if(!/[A-Z]/.test(inputArr[i+2])){
-            alert("Please only enter end nodes from A-Z");
-            return false;
-        }
-        if(inputArr[i+2].length > 1){
-            alert("Please only enter single letter end nodes");
-            return false;
-        }
-        if(inputArr[i].charCodeAt(0)-64 > numItems || inputArr[i+2].charCodeAt(0)-64 > numItems){
-            alert("Please only enter node letters that will be visible on the graph");
-            return false;
-        }
-    }
-    return true;
 }
 
 // adds the visual part of connections
@@ -541,4 +581,52 @@ async function dijkstras(){
     }
     // reset node array table
     document.getElementById("stackTable").innerHTML = "<caption style='color:#8fdee6'>Current node array</caption><tr style='color:#8fdee6'><td>Node</td></tr><tr style='color:#8fdee6'><td>Dist</td></tr>";
+}
+
+// bellman-ford algorithm
+async function bellmanFord(){
+    nodeArr[0].distFromSrc = 0;
+    tableChange(1, nodeArr[0].distFromSrc, "distTable", 1);
+
+    const E = connectionsArr.length; // number of edges
+    const V = nodeArr.length; // number of verticies
+
+    // relax edges N-1 times (N = #Verticies)
+    for(let i = 1; i <= V-1; i++){
+        for(let j = 0; j < E; j++){
+            const start = connectionsArr[j].start;
+            const end = connectionsArr[j].end;
+            const weight = connectionsArr[j].weight;
+            connectionsArr[j].changeLineColor("red");
+            await new Promise((resolve) =>
+                setTimeout(() => {
+                    resolve();
+                }, delay)
+            );
+            if(start.distFromSrc != "10000" && start.distFromSrc + weight < end.distFromSrc){
+                end.distFromSrc = start.distFromSrc + weight;
+                tableChange((end.letter).charCodeAt(0) - 64, start.distFromSrc+weight, "distTable", 1);
+            }
+            connectionsArr[j].changeLineColor("blue");
+        }
+    }
+
+    // relax edges once more to check for negative cycle
+    let isNeg = false;
+    for(let i = 0; i < E; i++){
+        const start = connectionsArr[i].start;
+        const end = connectionsArr[i].end;
+        const weight = connectionsArr[i].weight;
+        if(start.distFromSrc != "10000" && start.distFromSrc + weight < end.distFromSrc){
+            isNeg = true;
+            //TODO: add negative cycle alert in right container
+        }
+    }
+    if(isNeg){
+        const negText = document.createElement("div");
+        negText.innerText = "There is a negative cycle!";
+        negText.setAttribute("style", "color:red; text-align:center; font-size:25px");
+        negText.setAttribute("id", "negText");
+        document.getElementById("right-container").appendChild(negText);
+    }
 }

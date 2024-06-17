@@ -4,7 +4,39 @@
         <title>Welcome to the thunder dome!</title>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE-edge" />
-        <link rel="stylesheet" href="style.css" />
+         <style>
+            h1{
+                color: #8fdee6;
+                text-align: center;
+            }
+
+            .center{
+                position: absolute;
+                left: 55%;
+                top: 20%;
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+
+            .button{
+                margin-bottom: 10px;
+                background-color: #ffffff;
+                color:black;
+                border: 2px solid #8dca6d;
+                cursor: pointer;
+                text-align: center;
+                font-size: 25px;
+                width: 75%;
+                border-radius: 7px;
+                transition-duration: 0.4s;
+                display: inline-block;
+            }
+
+            .button:hover{
+                background-color: #8dca6d;
+                color:white;
+            }
+         </style>
     </head>
     <body style="background-color: #011627">
         <h1>Welcome, please choose an option</h1>
@@ -13,6 +45,18 @@
             <button type="button" class="button" id="searching">Searching Algorithms</button>
             <button type="button" class="button" id="shortest-path">Shortest Path Algorithms</button>
         </div>
-        <script src="script.js"></script>
+        <script>
+            document.getElementById('sorting').addEventListener('click', () =>{
+                location.href = "sortingSite";
+            })
+
+            document.getElementById('searching').addEventListener('click', () =>{
+                location.href = "searchingSite";
+            })
+
+            document.getElementById('shortest-path').addEventListener('click', () =>{
+                location.href = "shortestPathSite";
+            })
+        </script>
     </body>
 </html>
