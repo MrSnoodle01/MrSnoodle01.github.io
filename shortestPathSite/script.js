@@ -69,10 +69,8 @@ document.getElementById('num-items').oninput = function(){
                 if(connectionsArr[j].end.letter == popped.letter || connectionsArr[j].start.letter == popped.letter){
                     if(connectionsArr[j].line != null && connectionsArr[j].line != undefined){
                         (connectionsArr[j].line).remove();
-                        // connectionsArr[j].line = null;
                         connectionsArr.splice(j, 1);
                         j--;
-                        // console.log(connectionsArr);
                     }
                 }
             }
@@ -345,7 +343,8 @@ function addVisualConnections(){
         {color: 'blue', 
         middleLabel: LeaderLine.pathLabel({text: (connectionsArr[i].weight).toString(), 
         outlineColor: 'black', 
-        color: 'orange'})});
+        color: 'orange',
+        textDecoration: 'underline'})});
     }
 }
 
