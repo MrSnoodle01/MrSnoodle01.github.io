@@ -244,22 +244,6 @@ function addConnections(){
         let tempObj = new connection(tempStart, Number(inputArr[i+1]), tempEnd);
         connectionsArr.push(tempObj);
     }
-
-    // sort connections
-    for (let i = 1; i < connectionsArr.length; i++){  
-        let key = connectionsArr[i];  
-        let j = i - 1;  
-  
-        /* Move elements of arr[0..i-1], that are  
-        greater than key, to one position ahead  
-        of their current position */
-        while (j >= 0 && connectionsArr[j].start.letter > key.start.letter){  
-            // arr[j + 1] = arr[j];  
-            connectionsArr[j+1] = connectionsArr[j];
-            j = j - 1;  
-        }  
-        connectionsArr[j + 1] = key;  
-    }  
 }
 
 //generate array of nodes and connects them
@@ -619,7 +603,6 @@ async function bellmanFord(){
         const weight = connectionsArr[i].weight;
         if(start.distFromSrc != "10000" && start.distFromSrc + weight < end.distFromSrc){
             isNeg = true;
-            //TODO: add negative cycle alert in right container
         }
     }
     if(isNeg){
