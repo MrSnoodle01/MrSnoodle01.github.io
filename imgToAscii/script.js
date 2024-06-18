@@ -15,8 +15,8 @@ document.getElementById('home-button').addEventListener('click', () =>{
 })
 
 fileInput.onchange = e => {
-    customRows = Number(document.getElementById("customRows").value);
-    customCols = Number(document.getElementById("customCols").value);
+    let customRows = Number(document.getElementById("customRows").value);
+    let customCols = Number(document.getElementById("customCols").value);
     if(customRows > 1000){
         MAX_HEIGHT = 1000;
     }else{
