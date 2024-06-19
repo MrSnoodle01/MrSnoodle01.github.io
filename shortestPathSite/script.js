@@ -632,18 +632,7 @@ async function floydWarshall(){
         dist[i][i] = 0;
     }
 
-    for(let k = 0; k < V; k++){
-        for(let i = 0; i < V; i++){
-            for(let j = 0; j < V; j++){
-                if(dist[i][k] + dist[k][j] < dist[i][j]){
-                    dist[i][j] = dist[i][k] + dist[k][j];
-                }
-            }
-        }
-    }
-
-    // output solution matrix to table
-    let table = document.getElementById("distTable");
+    // initialize table
     for(let i = 0; i < V; i++){
         let tempString = "";
         
@@ -656,5 +645,31 @@ async function floydWarshall(){
 
         tempString = tempString.slice(0,-2); // remove last comma
         await tableChange(i+1, tempString, "distTable", 1);
+    }
+
+    for(let k = 0; k < V; k++){
+        for(let i = 0; i < V; i++){
+            for(let j = 0; j < V; j++){
+                if(dist[i][k] + dist[k][j] < dist[i][j]){
+                    dist[i][j] = dist[i][k] + dist[k][j];
+
+                    // updates table
+                    let tempString = "";
+                    for(let a = 0; a < V; a++){
+                        if(dist[i][a] == 10000)
+                            tempString += `${String.fromCharCode(a+65)}: INF, `;
+                        else
+                            tempString += `${String.fromCharCode(a+65)}: ${dist[i][a]}, `;
+                    }
+                    tableChange(i+1, tempString, "distTable", 1);
+
+                    await new Promise((resolve) =>
+                        setTimeout(() => {
+                            resolve();
+                        }, delay)
+                    );
+                }
+            }
+        }
     }
 }
