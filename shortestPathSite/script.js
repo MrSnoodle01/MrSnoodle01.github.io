@@ -1,4 +1,3 @@
-const MAX = 20;
 var delay = 0;
 var offsetX = 0, offsetY = 0;
 var nodeArr = [];
@@ -170,6 +169,10 @@ async function algoPick(el){
         case "Bellman-Ford Algorithm":
             console.log("bellman-ford algorithm");
             await bellmanFord();
+            break;
+        case "Floyd-Warshall Algorithm":
+            console.log("floyd-warshall algorithm");
+            await floydWarshall();
             break;
         default:
             break;
@@ -611,5 +614,47 @@ async function bellmanFord(){
         negText.setAttribute("style", "color:red; text-align:center; font-size:25px");
         negText.setAttribute("id", "negText");
         document.getElementById("right-container").appendChild(negText);
+    }
+}
+
+// floyd-warshall algorithm
+async function floydWarshall(){
+    let V = nodeArr.length; // # of verticies
+    let dist = Array.from(Array(V), () => new Array(V).fill(10000));
+
+    // initialize solution matrix
+    connectionsArr.forEach(e => {
+        dist[(e.start.letter).charCodeAt(0)-65][(e.end.letter).charCodeAt(0)-65] = e.weight;
+    });
+
+    // diagonals equal zero
+    for(let i = 0; i < V; i++){
+        dist[i][i] = 0;
+    }
+
+    for(let k = 0; k < V; k++){
+        for(let i = 0; i < V; i++){
+            for(let j = 0; j < V; j++){
+                if(dist[i][k] + dist[k][j] < dist[i][j]){
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+
+    // output solution matrix to table
+    let table = document.getElementById("distTable");
+    for(let i = 0; i < V; i++){
+        let tempString = "";
+        
+        for(let j = 0; j < V; j++){
+            if(dist[i][j] == 10000)
+                tempString += `${String.fromCharCode(j+65)}: INF, `;
+            else
+                tempString += `${String.fromCharCode(j+65)}: ${dist[i][j]}, `;
+        }
+
+        tempString = tempString.slice(0,-2); // remove last comma
+        await tableChange(i+1, tempString, "distTable", 1);
     }
 }
