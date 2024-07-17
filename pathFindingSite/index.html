@@ -9,22 +9,22 @@
     <body style="background-color: #011627" onload="startFunction()">
         <div id="top-container" class="container">
             <label id="header" style="color: #8fdee6">Path Find some things</label>
-            <div class="input">
-                <label for="options" style="color: #8fdee6">Select what node to change</label>
-                <!-- TODO: change this to a button style selector -->
-                <select name="options" id="options">
-                    <option value="start">Start</option>
-                    <option value="wall">Wall</option>
-                    <option value="finish">Finish</option>
-                    <option value="empty">Empty</option>
-                </select>
-                <button type="button" class="button" id="start-button">button?</button>    
+            <div class="input" style="top: 0%; left: 80%">
+                <label style="color: #8fdee6">Select what node to change</label><br>
+                <input type="radio" name="nodeType" value="start" checked>
+                <label for="start" style="color: #8fdee6">Start</label><br>
+                <input type="radio" name="nodeType" value="finish">
+                <label for="finish" style="color: #8fdee6">Finish</label><br>
+                <input type="radio" name="nodeType" value="wall">
+                <label for="wall" style="color: #8fdee6">Wall</label><br>
+                <input type="radio" name="nodeType" value="empty">
+                <label for="empty" style="color: #8fdee6">Empty</label><br>
+                <!-- TODO: fix this button placement -->
+                <!-- <button type="button" class="button" id="start-button">Find a Path!</button>     -->
             </div>
-            
         </div>
         <button type="button" id="home-button">Home</button>
         <div id="grid">
-            
         </div>
         <script src="script.js"></script>
     </body>

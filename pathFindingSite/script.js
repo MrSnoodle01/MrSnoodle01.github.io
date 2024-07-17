@@ -8,11 +8,6 @@ document.getElementById('home-button').addEventListener('click', () =>{
 //TODO: make blocks change color when clicking on them
 //TODO: make blocks animate smaller when hovering over them
 
-// create grid
-document.getElementById('start-button').addEventListener('click', () =>{
-    
-})
-
 // creates grid on loading of website
 function startFunction(){
     // TODO: fix performance issues with creating grid
@@ -44,30 +39,37 @@ function startFunction(){
 
 // click event listener functin for blocks
 function blockFunction(){
-    let selector = document.getElementById("options");
-    let color = selector.options[selector.selectedIndex].innerHTML;
+    let selected = document.querySelector('input[name="nodeType"]:checked').value;
+    
     // changes color based on which node type is selected
-    switch(color){
-        case "Start": 
+    switch(selected){
+        case "start": 
             // remove other start node if there is one
             if(document.getElementsByClassName("start").length == 1){
-                // remove start class and make it white
+                let element = document.getElementsByClassName("start").item(0);
+                element.classList.remove("start");
+                element.style.setProperty("background-color", "white");
             }
             this.style.setProperty("background-color", "green");
             this.classList.add("start");
             break;
-        case "Wall":
+        case "wall":
             this.style.setProperty("background-color", "black");
             break;
-        case "Finish":
+        case "finish":
             // remove other finish class if there is one
             if(document.getElementsByClassName("finish").length == 1){
-                // remove finish class andmake it white
+                let element = document.getElementsByClassName("finish").item(0);
+                element.classList.remove("finish");
+                element.style.setProperty("background-color", "white");
             }
             this.style.setProperty("background-color", "red");
             this.classList.add("finish");
             break;
-        case "Empty":
+        case "empty":
+            // remove start or finish class
+            this.classList.remove("finish");
+            this.classList.remove("start");
             this.style.setProperty("background-color", "white");
             break;
     }
