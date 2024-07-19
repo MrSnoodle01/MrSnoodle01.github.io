@@ -62,9 +62,20 @@
     color: black;
     text-align: center;
     position: absolute;
-    left: 45%;
+    left: 38%;
     font-size: 30px;
     margin-top: 10px;
+}
+
+#start-button{
+    left: -40%;
+    top: 50%;
+}
+
+#algo-pick{
+    top: 65%;
+    left: 0%;
+    position: absolute;
 }
 
 .block{

@@ -8,7 +8,14 @@
     </head>
     <body style="background-color: #011627" onload="startFunction()">
         <div id="top-container" class="container">
+            <!-- TODO: make header actually center -->
             <label id="header" style="color: #8fdee6">Path Find some things</label>
+            <div id="algo-pick">
+                <label for="algo-options" style="color: #8fdee6">Choose an algorithm</label>
+                <select name="algo-options" id="algo-options">
+                    <option value="AStar">A* Algorithm</option>
+                </select>
+            </div>
             <div class="input" style="top: 0%; left: 80%">
                 <label style="color: #8fdee6">Select what node to change</label><br>
                 <input type="radio" name="nodeType" value="start" checked>
@@ -19,8 +26,8 @@
                 <label for="wall" style="color: #8fdee6">Wall</label><br>
                 <input type="radio" name="nodeType" value="empty">
                 <label for="empty" style="color: #8fdee6">Empty</label><br>
-                <!-- TODO: fix this button placement -->
-                <!-- <button type="button" class="button" id="start-button">Find a Path!</button>     -->
+                <!-- TODO: fix this button placement and all placements for that matter-->
+                <button type="button" class="button" id="start-button">Find a Path!</button>    
             </div>
         </div>
         <button type="button" id="home-button">Home</button>
