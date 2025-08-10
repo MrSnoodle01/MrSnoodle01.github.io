@@ -10,7 +10,7 @@ interface Project {
 export default function Project(project: Project) {
     return (
         <div key={project.id}>
-            <a href="{project.link}">{project.link}</a>
+            <a href={project.link}>{project.link}</a>
             <h2>{project.title}</h2>
             <p style={{ color: "#a5a5a5ff" }}>
                 {project.Technologies.map((tech, index) => (

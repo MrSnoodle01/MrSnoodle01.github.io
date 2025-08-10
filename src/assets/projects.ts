@@ -10,4 +10,10 @@ export const projects = [{
     description: 'A 2D game developed in Unity where players solve puzzles using gravity manipulation mechanics.',
     Technologies: ['C#', 'Unity'],
     link: '',
+}, {
+    id: 2,
+    title: 'Portfolio Website',
+    description: 'A personal portfolio website showcasing my projects and skills, built with React.',
+    Technologies: ['React', 'TypeScript', 'CSS'],
+    link: 'https://mrsnoodle01.github.io',
 }]
