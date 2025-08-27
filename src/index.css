@@ -32,13 +32,13 @@ body {
 }
 
 h1 {
-  font-size: 2em;
+  font-size: 4vh;
   line-height: 1.1;
   text-align: center;
 }
 
 h2 {
-  font-size: 1.5em;
+  font-size: 3vh;
   line-height: 1.2;
   text-align: center;
 }

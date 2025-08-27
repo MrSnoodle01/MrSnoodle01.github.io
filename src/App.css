@@ -1,11 +1,24 @@
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 2rem;
 }
 
 body {
   background-color: #011627;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.project-card h2,
+.project-card a,
+.project-card p {
+  margin: 1vh;
 }
 
 .projects-carousel {
