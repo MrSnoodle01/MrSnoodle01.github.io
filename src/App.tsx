@@ -15,7 +15,7 @@ export default function App(props: { title: string }) {
         <a href="https://www.mountainproject.com/user/201304798/josh-richardson">Mountain Project</a>
       </p>
       <h2>👀 About me</h2>
-      <p style={{ maxWidth: "50vw" }}>
+      <p style={{ maxWidth: "40vw" }}>
         I’m Josh, a software developer with a passion for learning about computer science and rock climbing.
         This site showcases some of my projects, including an algorithm visualizer and a Unity game. Check them out below!
       </p>
