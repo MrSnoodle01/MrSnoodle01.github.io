@@ -1,5 +1,5 @@
-import { projects } from './assets/projects';
-import Project from './Project';
+import { projects } from '../assets/projects';
+import Project from '../components/Project';
 import { useState } from 'react';
 
 export default function Projects() {

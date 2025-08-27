@@ -1,10 +1,13 @@
-import './App.css'
-import ProjectList from './ProjectList'
+import './App.css';
+import ProjectList from './components/ProjectList';
+import NavBar from './components/NavBar';
 
-function App() {
+export default function App(props: { title: string }) {
+  document.title = props.title;
 
   return (
     <>
+      <NavBar />
       <h1>👋 Hey there, welcome to my website</h1>
       <p className="random-links">
         <a href="https://github.com/MrSnoodle01">Github</a>
@@ -25,5 +28,3 @@ function App() {
     </>
   )
 }
-
-export default App
