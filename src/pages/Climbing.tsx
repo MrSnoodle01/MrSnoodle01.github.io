@@ -11,6 +11,5 @@ export default function Climbing(props: { title: string }) {
                 You can find some of my climbing achievements on my <a href="https://www.mountainproject.com/user/201304798/josh-richardson">Mountain Project</a> account.
             </p>
         </div >
-
     )
 }

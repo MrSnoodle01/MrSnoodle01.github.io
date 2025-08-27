@@ -7,8 +7,9 @@ export default function Projects(props: { title: string }) {
     return (
         <div>
             <NavBar />
+            <h1>💻 Projects</h1>
             {projects.map((project) => (
-                <Project key={project.id} {...project} />
+                <Project key={project.id} {...project} className="projects-page" />
             ))}
         </div>
     )
