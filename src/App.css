@@ -8,6 +8,60 @@ body {
   background-color: #011627;
 }
 
+.page-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.infinite-slider-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  overflow: hidden;
+  height: 50vh;
+}
+
+.infinite-slider-track {
+  display: flex;
+  width: max-content;
+  animation: infinite-slide 60s linear infinite;
+}
+
+@keyframes infinite-slide {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.infinite-slider-track img {
+  height: 45vh;
+  width: 100%;
+  margin: 0 10px;
+}
+
+.projects-page {
+  border-bottom: 2px solid #73b3eb;
+  border-top: 2px solid #73b3eb;
+  width: 100%;
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 2px solid #73b3eb;
+  min-width: 40vw;
+}
+
 .project-card {
   display: flex;
   flex-direction: column;
