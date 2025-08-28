@@ -14,7 +14,7 @@ export default function Climbing(props: { title: string }) {
             <p style={{ maxWidth: "40vw" }}>
                 I started climbing in the summer of 2016 and have been hooked ever since. Shorty after I started climbing I joined a
                 competitive youth team at my local climbing gym. Here I learned the fundamentals of climbing and how to solve problems.
-                Once I aged out of competing at a youth level I started climbing outdoors and that is still where my main focus remains.
+                Once I aged out of competing at a youth level I started climbing outdoors where I found a new appreciation for the outdoors and climbing.
             </p>
             <ClimbingPics />
         </div >
