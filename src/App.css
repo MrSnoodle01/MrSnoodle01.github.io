@@ -8,6 +8,14 @@ body {
   background-color: #011627;
 }
 
+.page-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .infinite-slider-container {
   position: fixed;
   bottom: 0;
@@ -42,6 +50,7 @@ body {
 .projects-page {
   border-bottom: 2px solid #73b3eb;
   border-top: 2px solid #73b3eb;
+  width: 100%;
 }
 
 .nav-bar {

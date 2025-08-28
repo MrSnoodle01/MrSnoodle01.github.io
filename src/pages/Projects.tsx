@@ -5,7 +5,7 @@ import NavBar from '../components/NavBar';
 export default function Projects(props: { title: string }) {
     document.title = props.title;
     return (
-        <div>
+        <div className="page-center">
             <NavBar />
             <h1>💻 Projects</h1>
             {projects.map((project) => (
