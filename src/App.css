@@ -1,7 +1,7 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2.5vh 0vw;
 }
 
 body {
@@ -17,9 +17,6 @@ body {
 }
 
 .infinite-slider-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
   width: 100vw;
   overflow: hidden;
   height: 50vh;
@@ -44,7 +41,8 @@ body {
 .infinite-slider-track img {
   height: 45vh;
   width: 100%;
-  margin: 0 10px;
+  margin: 0 5px;
+  border-radius: 5px;
 }
 
 .projects-page {
@@ -57,7 +55,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 1vh 5vw;
   border-bottom: 2px solid #73b3eb;
   min-width: 40vw;
 }
