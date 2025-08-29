@@ -17,6 +17,7 @@ body {
 }
 
 .infinite-slider-container {
+  margin-top: 7.5vh;
   width: 100vw;
   overflow: hidden;
   height: 50vh;
