@@ -1,13 +1,14 @@
 import './App.css';
 import ProjectList from './components/ProjectList';
 import NavBar from './components/NavBar';
+import { BrowserView } from 'react-device-detect';
 
 export default function App(props: { title: string }) {
   document.title = props.title;
 
   return (
     <div className="page-center">
-      < NavBar />
+      <NavBar />
       <h1>👋 Hey there, welcome to my website</h1>
       <p className="random-links">
         <a href="https://github.com/MrSnoodle01">Github</a>
@@ -19,7 +20,9 @@ export default function App(props: { title: string }) {
         I’m Josh, a software developer with a passion for learning about computer science and rock climbing.
         This site showcases some of my projects, including an algorithm visualizer and a Unity game. Check them out below!
       </p>
-      <ProjectList />
+      <BrowserView>
+        <ProjectList />
+      </BrowserView>
     </div>
   )
 }
