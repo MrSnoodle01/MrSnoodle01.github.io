@@ -18,6 +18,12 @@ export const projects = [{
     link: 'https://mrsnoodle01.github.io/Count-the-beans/',
 }, {
     id: 3,
+    title: 'Termination',
+    description: 'A retro arcade game made in 48 hours for a local hackathon',
+    technologies: ['C#', 'Unity'],
+    link: 'https://mrsnoodle.itch.io/termination',
+}, {
+    id: 4,
     title: 'Portfolio Website',
     description: 'A personal portfolio website showcasing my projects and skills, built with React.',
     technologies: ['React', 'TypeScript', 'HTML', 'CSS'],
