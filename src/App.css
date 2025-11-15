@@ -1,7 +1,6 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: 2.5vh 0vw;
 }
 
 body {
@@ -64,9 +63,21 @@ body {
 
 .project-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
+}
+
+.project-image {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.project-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .project-card h2,

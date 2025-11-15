@@ -4,12 +4,13 @@ import NavBar from '../components/NavBar';
 
 export default function Projects(props: { title: string }) {
     document.title = props.title;
+
     return (
         <div className="page-center">
             <NavBar />
             <h1>💻 Projects</h1>
             {projects.map((project) => (
-                <Project key={project.id} {...project} className="projects-page" />
+                <Project key={project.id} {...project} className="projects-page" imageSide={project.id % 2} />
             ))}
         </div>
     )
