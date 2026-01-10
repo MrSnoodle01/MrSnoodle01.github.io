@@ -1,10 +1,10 @@
 export const projects = [{
     id: 0,
-    title: 'Algorithm Visualizer',
-    description: 'A web application that visualizes various algorithms in action, helping users understand how they work',
-    technologies: ['JavaScript', 'HTML', 'CSS'],
-    link: 'https://mrsnoodle01.github.io/Algorithms/',
-    image: '/appImages/AlgorithmProject.png',
+    title: 'Budget Buddy',
+    description: 'A monthly budget tracker to help you keep track of your spending',
+    technologies: ['React', 'TypeScript', 'Flask', 'Python', 'HTML', 'CSS'],
+    link: 'https://yourbudgetbuddy.vercel.app/',
+    image: '/appImages/BudgetBuddy.png',
 }, {
     id: 1,
     title: 'Grav Lab',
@@ -14,11 +14,11 @@ export const projects = [{
     image: '/appImages/GravLab.png',
 }, {
     id: 2,
-    title: 'Budget Buddy',
-    description: 'A monthly budget tracker to help you keep track of your spending',
-    technologies: ['React', 'TypeScript', 'Flask', 'Python', 'HTML', 'CSS'],
-    link: 'https://yourbudgetbuddy.vercel.app/',
-    image: '/appImages/BudgetBuddy.png',
+    title: 'Algorithm Visualizer',
+    description: 'A web application that visualizes various algorithms in action, helping users understand how they work',
+    technologies: ['JavaScript', 'HTML', 'CSS'],
+    link: 'https://mrsnoodle01.github.io/Algorithms/',
+    image: '/appImages/AlgorithmProject.png',
 }, {
     id: 3,
     title: 'Guess the Number of Beans',
