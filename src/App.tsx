@@ -1,7 +1,6 @@
 import './App.css';
-import ProjectList from './components/ProjectList';
 import NavBar from './components/NavBar';
-import { BrowserView, MobileView } from 'react-device-detect';
+import Hero from './components/HeroPage/Hero';
 
 export default function App(props: { title: string }) {
   document.title = props.title;
@@ -9,27 +8,7 @@ export default function App(props: { title: string }) {
   return (
     <div className="page-center">
       <NavBar />
-      <h1>👋 Hey there, welcome to my website</h1>
-      <p className="random-links">
-        <a href="https://github.com/MrSnoodle01">Github</a>
-        <a href="https://www.linkedin.com/in/joshua-richardson-084860284/">Linkedin</a>
-        <a href="https://www.mountainproject.com/user/201304798/josh-richardson">Mountain Project</a>
-      </p>
-      <BrowserView>
-        <h2>👀 About me</h2>
-        <p style={{ maxWidth: "40vw" }}>
-          I’m Josh, a software developer with a passion for learning about computer science and rock climbing.
-          This site showcases some of my projects, including an algorithm visualizer and a Unity game. Check them out below or on the projects page!
-        </p>
-        <ProjectList />
-      </BrowserView>
-      <MobileView>
-        <h2>👀 About me</h2>
-        <p style={{ maxWidth: "40vw" }}>
-          I’m Josh, a software developer with a passion for learning about computer science and rock climbing.
-          This site showcases some of my projects, including an algorithm visualizer and a Unity game. Check them out on the projects page!
-        </p>
-      </MobileView>
+      <Hero />
     </div>
   )
 }

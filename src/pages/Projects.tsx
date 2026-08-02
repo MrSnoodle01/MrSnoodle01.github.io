@@ -10,7 +10,7 @@ export default function Projects(props: { title: string }) {
             <NavBar />
             <h1>💻 Projects</h1>
             {projects.map((project) => (
-                <Project key={project.id} {...project} className="projects-page" imageSide={project.id % 2} />
+                <Project key={project.id} {...project} className="projects-page" />
             ))}
         </div>
     )

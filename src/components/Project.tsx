@@ -1,40 +1,55 @@
-import { BrowserView } from 'react-device-detect';
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 
 interface ProjectProps {
     id: number;
     title: string;
     description: string;
     technologies: string[];
-    link: string;
     image: string;
     className?: string;
-    imageSide: number;
+    liveLink?: string;
+    githubLink?: string;
 }
 
 
 export default function Project(project: ProjectProps) {
     return (
         <div key={project.id} className={project.className ? project.className + " project-card" : "project-card"}>
-            <BrowserView>
-                {project.imageSide === 0 ? <img src={project.image} alt={`Project ${project.id}`} key={project.id} className="project-image" /> : null}
-            </BrowserView>
-
+            <img src={project.image} alt={`Project ${project.id}`} key={project.id} className="project-image" />
             <div className="project-info">
                 <h2>{project.title}</h2>
-                <a href={project.link}>{project.link}</a>
-                <p style={{ color: "#a5a5a5ff" }}>
-                    {project.technologies.map((tech, index) => (
-                        <span key={index}>
-                            {tech}{index < project.technologies.length - 1 ? ', ' : ''}
+                <div className="project-links">
+                    {project.liveLink && (
+                        <a
+                            href={project.liveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-button"
+                        >
+                            <FaExternalLinkAlt /> Live Demo
+                        </a>
+                    )}
+
+                    {project.githubLink && (
+                        <a
+                            href={project.githubLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-button secondary"
+                        >
+                            <FaGithub /> GitHub
+                        </a>
+                    )}
+                </div>
+                <div className="tech-list">
+                    {project.technologies.map((tech) => (
+                        <span className="tech-badge" key={tech}>
+                            {tech}
                         </span>
                     ))}
-                </p>
+                </div>
                 <p style={{ maxWidth: "90%" }}>{project.description}</p>
             </div>
-
-            <BrowserView>
-                {project.imageSide === 1 ? <img src={project.image} alt={`Project ${project.id}`} key={project.id} className="project-image" /> : null}
-            </BrowserView>
         </div>
     )
 }
