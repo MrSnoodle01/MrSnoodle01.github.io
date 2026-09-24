@@ -21,7 +21,7 @@ export default function Hero() {
                 </p>
 
                 <p className="hero-description">
-                    Currently developing robotics software at Richtech Robotics.
+                    Currently developing games at Konami Gaming Inc.
                 </p>
 
                 <div className="hero-buttons">
